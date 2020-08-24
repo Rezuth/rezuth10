@@ -1,0 +1,387 @@
+body {
+	margin: 0;
+	background-color: #0C273D;
+	width: 1550px;
+}
+
+
+.header
+{
+	margin: 0 auto;
+}
+
+.header2
+{
+	margin: 0 auto;
+	background-color: #70B85D;
+	padding-bottom: 0.1px;
+}
+
+.title
+{
+	margin: 0 auto;
+	margin-left: 250px;
+	color: #FFFEF1;
+}
+
+.clear {
+	clear: both;
+}
+
+/*
+	dark blue: #0C273D
+
+	light blue: #54D0ED
+
+	white: #FFFEF1
+
+	light green: #70B85D
+
+	dark green: #2C5E2E
+*/
+
+.form
+{
+	border-radius: 10px;
+}
+
+.navigation
+{	
+	width: 1400px;
+}
+
+.navigation2
+{	
+	width: 1400px;
+	color: #FFFEF1;
+}
+
+
+.title2
+{
+	margin: 0 auto;
+	margin-right: 150px;
+	color: #FFFEF1;
+}
+
+.navigation a {
+	color: #e4f4cd;
+	text-decoration: none; 	
+	padding: 12px;
+}
+
+
+.navigation ul {
+	list-style: none;
+	padding: 12px 0;
+	margin-right: 120px;
+}
+
+.navigation ul li {
+	display: inline-block;
+	margin-right: 30px;
+	color: #FFFEF1;
+}
+.navigation2 a {
+	color: #e4f4cd;
+	text-decoration: none; 	
+	padding: 12px;
+}
+
+
+.navigation2 ul {
+	list-style: none;
+	padding: 12px;
+	margin-left: 225px;
+}
+
+.navigation2 ul li {
+	display: inline-block;
+	margin-right: 30px;
+	color: #FFFEF1;
+}
+
+.left {
+	float: left;	
+}
+
+.pagetitle h2 h4
+{
+	color: #5c89a1;
+	text-align: center;
+}
+
+.right {
+	float: right;	
+}
+
+
+
+
+.picture
+{
+	position: center;
+}
+
+
+
+.content
+{
+	margin: 0 auto;
+	margin-top: 40px;
+	color: #5c89a1;
+	text-align: center;
+}
+
+.p1
+{
+	color: #2C5E2E;
+	text-decoration: underline;
+}
+
+.p2
+{
+	color: #0C273D;
+}
+
+.p4
+{
+	color: #FFFEF1;
+}
+
+.content2
+{
+	background-color: #ffffff;
+	margin: 0 auto;
+	padding: 40px;
+	margin-bottom: 40px;
+	margin-top: 40px;
+	text-align: center;
+}
+
+.im
+{
+	width: 900px;
+	border: 10px solid #ffffff;
+	margin-right: 60px;
+}
+
+.im2
+{
+	width: 150px;
+	border: 2px solid #ececec;
+}
+
+.im3
+{
+	width: 100px;
+	float: left;
+	margin-top: 20px;
+	margin-left: 30px;
+	margin-right: 50px;
+       
+}
+
+.section
+{
+	width: 900px;
+	margin: 0 auto;
+}
+
+.col
+{
+	float: left;
+	width: 210px;
+	padding-right: 15px;	
+	text-align: center;
+	margin-left: 10px;
+}
+
+.col h3
+{
+	color: #2C5E2E
+}
+
+
+.ftext
+{
+	color: #54D0ED;
+	text-align: left;
+	width: 1000px;
+	float: left;
+        margin-bottom: 30px; 
+	
+}
+
+.last
+{
+	float: left;
+	width: 200px;
+}
+
+.last h4
+{
+	color: #2C5E2E;
+}
+
+.last strong
+{
+	color: #70B85D;
+	text-decoration: underline;
+}
+
+.content_contact {
+	position: center;
+	padding: 15px;
+	content: 40px;
+	margin: 0 auto;
+        margin-left: 300px;
+        margin-top: 50px;
+        
+}
+
+
+.content_contact form {
+	color: #ffffff;
+	margin: 25px;
+       
+        
+}
+
+input {
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+        border:solid 1px #2C5E2E;
+        padding:5px;
+	height: 30px;
+	width: 155px;
+        margin-left: 77px;
+        color: #000;
+}
+
+.inp
+{
+    margin-left: 135px;
+}
+
+.inp2
+{
+    margin-left: 162px;
+}
+
+.inp3
+{
+    margin-left: 130px;
+}
+
+.sel
+{
+    margin-left: 200px;
+    margin-top: -30px;
+    color: #000;
+}
+
+.title2 h1
+{
+    text-align: left;
+    color: #ffffff;
+    margin-left: 20px;
+}
+
+.sub
+{
+    margin-left: -80px;
+}
+
+.imCola
+{
+   margin-left: 650px;
+   margin-top: -500px;
+   margin-bottom: 50px;
+}
+
+.imCola2
+{
+    margin-left: 580px;
+    margin-top: -200px;
+    margin-bottom: 50px;
+}
+
+.imCola3
+{
+    margin-top: -220px;
+    margin-left: 800px;
+    margin-bottom: 100px;
+}
+
+.subB
+{
+    margin-left: -80px;
+}
+
+inpB
+{
+    margin-left: 100px;
+}
+
+.navigationSpec
+{
+    width: 1400px;
+    margin-left: 100px;
+}
+
+.textXD
+{
+    color: #ffffff;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-left: 100px;
+    font-size:160%
+   
+}
+
+.textXDD
+{
+    color: #ffffff;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-left: 540px;
+    font-size:160%
+   
+}
+
+.textXDX
+{
+    color: #ffffff;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-left: 100px;
+    color: #70B85D;
+}
+   
+
+.textXDDD
+{
+    color: #ffffff;
+    text-align: justify;
+    text-justify: inter-word;
+    margin-left: 680px;
+    font-size:160%
+   
+}
+
+.ORR 
+{
+        
+	padding-right: 50px;	
+	text-align: center;
+	margin-left: 10px;
+}
+
+.error-span{
+    color:red;
+}
+
+
+
+
