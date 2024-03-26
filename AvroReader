@@ -1,0 +1,47 @@
+import org.apache.avro.Schema;
+import org.apache.avro.file.DataFileReader;
+import org.apache.avro.file.DataFileWriter;
+import org.apache.avro.generic.GenericDatumReader;
+import org.apache.avro.generic.GenericDatumWriter;
+import org.apache.avro.generic.GenericRecord;
+import org.apache.avro.io.DatumReader;
+import org.apache.avro.io.DatumWriter;
+
+import java.io.File;
+import java.io.IOException;
+
+public class AvroFileModifier {
+
+    public static void main(String[] args) {
+        // Specify the Avro schema
+        Schema schema = new Schema.Parser().parse(new File("user.avsc"));
+
+        try {
+            // Read the Avro file
+            DatumReader<GenericRecord> datumReader = new GenericDatumReader<>(schema);
+            DataFileReader<GenericRecord> dataFileReader = new DataFileReader<>(new File("users.avro"), datumReader);
+
+            // Create a new Avro file to write the modified data
+            DatumWriter<GenericRecord> datumWriter = new GenericDatumWriter<>(schema);
+            DataFileWriter<GenericRecord> dataFileWriter = new DataFileWriter<>(datumWriter);
+            dataFileWriter.create(schema, new File("modified_users.avro"));
+
+            // Iterate over each record in the Avro file
+            GenericRecord record = null;
+            while (dataFileReader.hasNext()) {
+                // Read the record
+                record = dataFileReader.next(record);
+                // Modify the record as needed
+                record.put("age", 30); // For example, change the 'age' field to 30
+                // Write the modified record to the new Avro file
+                dataFileWriter.append(record);
+            }
+
+            // Close the file readers and writers
+            dataFileReader.close();
+            dataFileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+}
