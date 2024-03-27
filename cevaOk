@@ -1,0 +1,22 @@
+ public static void main(String[] args) throws Exception {
+        // Step 1: Define Avro schema
+        String schemaJson = "{\"type\":\"record\",\"name\":\"Person\",\"fields\":[{\"name\":\"name\",\"type\":\"string\"},{\"name\":\"age\",\"type\":\"int\"}]}";
+        Schema schema = new Schema.Parser().parse(schemaJson);
+
+        // Step 2: Parse string into JSON object
+        String jsonString = "{\"name\":\"John Doe\",\"age\":30}";
+        JSONObject jsonObject = new JSONObject(jsonString);
+
+        // Step 3: Convert JSON object to GenericRecord
+        GenericRecord record = jsonToGenericRecord(jsonObject, schema);
+
+        // Print the GenericRecord
+        System.out.println("GenericRecord: " + record);
+    }
+
+    public static GenericRecord jsonToGenericRecord(JSONObject jsonObject, Schema schema) throws Exception {
+        DatumReader<GenericRecord> reader = new GenericDatumReader<>(schema);
+        Decoder decoder = DecoderFactory.get().jsonDecoder(schema, jsonObject.toString());
+        return reader.read(null, decoder);
+    }
+}
