@@ -18,3 +18,18 @@ SET COLUMN_C = TABLE_C.COLUMN_C
 FROM TABLE_A
 JOIN TABLE_B ON TABLE_A.COLUMN_A = TABLE_B.COLUMN_A
 JOIN TABLE_C ON TABLE_B.COLUMN_B = TABLE_C.COLUMN_B;
+
+
+
+
+
+
+
+
+SELECT
+    CASE 
+        WHEN 1 = 1 THEN 'Condition 1 met'
+        WHEN 2 = 2 THEN 'Condition 2 met' -- This condition is not evaluated if the first condition is met
+        ELSE 'No condition met'
+    END AS Result
+FROM DUAL;
