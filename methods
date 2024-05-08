@@ -1,0 +1,55 @@
+WITH RECURSIVE date_sequence AS (
+  SELECT :input_date AS dt FROM dual
+  UNION ALL
+  SELECT dt - 1 FROM date_sequence WHERE dt - 1 >= (SELECT MIN(XDAY) FROM A)
+)
+SELECT A.NAME
+FROM A
+JOIN date_sequence ON A.XDAY = date_sequence.dt
+WHERE ROWNUM = 1;
+
+Using CONNECT BY:
+
+SELECT A.NAME
+FROM A
+WHERE A.XDAY = (
+  SELECT MAX(XDAY) 
+  FROM A
+  WHERE XDAY <= :input_date
+  CONNECT BY PRIOR XDAY = XDAY - 1
+  START WITH XDAY = :input_date
+);
+Using PL/SQL Loop:
+
+DECLARE
+  v_date DATE := :input_date;
+  v_name VARCHAR2(100);
+BEGIN
+  LOOP
+    SELECT NAME INTO v_name FROM A WHERE XDAY = v_date;
+    EXIT WHEN v_name IS NOT NULL;
+    v_date := v_date - 1;
+  END LOOP;
+  DBMS_OUTPUT.PUT_LINE('Name: ' || v_name);
+END;
+
+Using Inline View with Row Number:
+
+SELECT NAME
+FROM (
+  SELECT NAME, XDAY, ROW_NUMBER() OVER (ORDER BY XDAY DESC) AS rn
+  FROM A
+  WHERE XDAY <= :input_date
+)
+WHERE rn = 1;
+
+Using Cross Join with Subquery:
+
+SELECT A.NAME
+FROM A
+CROSS JOIN (
+  SELECT MAX(XDAY) AS last_date 
+  FROM A 
+  WHERE XDAY <= :input_date
+) AS sub
+WHERE A.XDAY = sub.last_date;
