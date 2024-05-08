@@ -31,3 +31,30 @@ FROM (
 ) date_range
 WHERE EXISTS (SELECT 1 FROM OFFICE WHERE BUSINESS_DATE = date_range.BUSINESS_DATE)
 AND ROWNUM = 1;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+WITH DateSequence AS (
+  SELECT :input_date - LEVEL + 1 AS CurrentDate
+  FROM dual
+  CONNECT BY LEVEL <= :input_date - (SELECT MIN(fdate) FROM office) + 1
+)
+SELECT MIN(fdate) AS FirstPresentDate
+FROM DateSequence
+JOIN office ON DateSequence.CurrentDate = office.fdate
+GROUP BY DateSequence.CurrentDate;
