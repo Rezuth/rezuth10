@@ -34,3 +34,54 @@ BEGIN
     END LOOP;
 END;
 /
+
+
+
+
+
+
+
+
+
+
+
+
+
+Great! Now that you've successfully run the PL/SQL block to get the unused space for each partition, the results have been printed to the DBMS output. You can check the results using the DBMS Output window in your SQL development tool (such as SQL*Plus, SQL Developer, or another IDE that supports Oracle).
+
+Checking Results in Oracle SQL Developer
+Enable DBMS Output:
+
+Open Oracle SQL Developer.
+Connect to your database.
+Go to the "View" menu and select "DBMS Output".
+In the DBMS Output window, click the green "+" icon to enable output for your database connection.
+Run the PL/SQL Block:
+
+Open a SQL Worksheet (Ctrl+Shift+N).
+Paste your PL/SQL block into the worksheet.
+Run the block (highlight the code and press F5 or click the "Run Script" button).
+View the Output:
+
+After running the block, the DBMS Output window should display the results.
+You will see output lines like these:
+yaml
+Copiază codul
+Partition Name: PARTITION_1
+Total Blocks: 50000
+Total Bytes: 40960000
+Unused Blocks: 20000
+Unused Bytes: 16384000
+-------------------------------
+Partition Name: PARTITION_2
+Total Blocks: 30000
+Total Bytes: 24576000
+Unused Blocks: 10000
+Unused Bytes: 8192000
+-------------------------------
+Understanding the Results
+Partition Name: Name of the partition.
+Total Blocks: Total number of blocks allocated to the partition.
+Total Bytes: Total size in bytes allocated to the partition.
+Unused Blocks: Number of blocks that are allocated but not used.
+Unused Bytes: Size in bytes that are allocated but not used.
