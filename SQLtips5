@@ -1,0 +1,36 @@
+DECLARE
+    total_blocks NUMBER;
+    total_bytes NUMBER;
+    unused_blocks NUMBER;
+    unused_bytes NUMBER;
+    last_used_extent_file_id NUMBER;
+    last_used_extent_block_id NUMBER;
+    last_used_block NUMBER;
+    v_partition_name VARCHAR2(50);
+BEGIN
+    FOR rec IN (SELECT partition_name FROM user_tab_partitions WHERE table_name = 'YOUR_TABLE_NAME') LOOP
+        v_partition_name := rec.partition_name;
+
+        DBMS_SPACE.UNUSED_SPACE (
+            segment_owner => 'YOUR_SCHEMA_NAME',
+            segment_name  => 'YOUR_TABLE_NAME',
+            segment_type  => 'TABLE PARTITION',
+            partition_name => v_partition_name,
+            total_blocks  => total_blocks,
+            total_bytes   => total_bytes,
+            unused_blocks => unused_blocks,
+            unused_bytes  => unused_bytes,
+            last_used_extent_file_id => last_used_extent_file_id,
+            last_used_extent_block_id => last_used_extent_block_id,
+            last_used_block => last_used_block
+        );
+
+        DBMS_OUTPUT.PUT_LINE('Partition Name: ' || v_partition_name);
+        DBMS_OUTPUT.PUT_LINE('Total Blocks: ' || total_blocks);
+        DBMS_OUTPUT.PUT_LINE('Total Bytes: ' || total_bytes);
+        DBMS_OUTPUT.PUT_LINE('Unused Blocks: ' || unused_blocks);
+        DBMS_OUTPUT.PUT_LINE('Unused Bytes: ' || unused_bytes);
+        DBMS_OUTPUT.PUT_LINE('-------------------------------');
+    END LOOP;
+END;
+/
