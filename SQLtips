@@ -1,0 +1,106 @@
+How to check for storage in a table?
+ChatGPT
+To check the storage size of a table, you need to use the appropriate commands and functions available in your database management system. Here's how you can do it for some common databases:
+
+PostgreSQL
+Table Size:
+
+sql
+Copiază codul
+SELECT pg_size_pretty(pg_table_size('your_table_name')) AS table_size;
+Total Size (including indexes, toast tables, etc.):
+
+sql
+Copiază codul
+SELECT pg_size_pretty(pg_total_relation_size('your_table_name')) AS total_size;
+Indexes Size:
+
+sql
+Copiază codul
+SELECT pg_size_pretty(pg_indexes_size('your_table_name')) AS indexes_size;
+Breakdown by Table and Index:
+
+sql
+Copiază codul
+SELECT
+    c.relname AS object_name,
+    pg_size_pretty(pg_total_relation_size(c.oid)) AS size
+FROM pg_class c
+LEFT JOIN pg_namespace n ON n.oid = c.relnamespace
+WHERE c.relname = 'your_table_name';
+MySQL
+Table Size:
+
+sql
+Copiază codul
+SELECT 
+    table_name AS "Table",
+    ROUND(((data_length + index_length) / 1024 / 1024), 2) AS "Size (MB)"
+FROM information_schema.TABLES 
+WHERE table_schema = "your_database_name"
+    AND table_name = "your_table_name";
+Detailed Storage Information:
+
+sql
+Copiază codul
+SHOW TABLE STATUS LIKE 'your_table_name';
+SQL Server
+Table and Index Size:
+
+sql
+Copiază codul
+EXEC sp_spaceused 'your_table_name';
+Detailed Index and Partition Size:
+
+sql
+Copiază codul
+SELECT 
+    a.index_id, 
+    name AS index_name, 
+    SUM(p.rows) AS RowCounts, 
+    SUM(a.total_pages) * 8 AS TotalSpaceKB, 
+    SUM(a.used_pages) * 8 AS UsedSpaceKB, 
+    SUM(a.data_pages) * 8 AS DataSpaceKB
+FROM 
+    sys.indexes AS i
+JOIN 
+    sys.partitions AS p ON p.object_id = i.object_id AND p.index_id = i.index_id
+JOIN 
+    sys.allocation_units AS a ON a.container_id = p.partition_id
+WHERE 
+    i.object_id = OBJECT_ID('your_table_name')
+GROUP BY 
+    i.object_id, i.index_id, i.name 
+ORDER BY 
+    object_name(i.object_id), i.index_id;
+Oracle
+Table Size:
+
+sql
+Copiază codul
+SELECT 
+    segment_name, 
+    segment_type, 
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb 
+FROM 
+    user_segments 
+WHERE 
+    segment_name = 'YOUR_TABLE_NAME'
+GROUP BY 
+    segment_name, segment_type;
+Detailed Table and Index Size:
+
+sql
+Copiază codul
+SELECT 
+    a.TABLESPACE_NAME, 
+    a.SEGMENT_NAME, 
+    a.SEGMENT_TYPE, 
+    ROUND(SUM(a.BYTES) / (1024 * 1024), 2) AS "Size (MB)"
+FROM 
+    DBA_SEGMENTS a
+WHERE 
+    a.SEGMENT_NAME = 'YOUR_TABLE_NAME'
+GROUP BY 
+    a.TABLESPACE_NAME, a.SEGMENT_NAME, a.SEGMENT_TYPE;
+These commands will help you get a clear picture of how much space your table and its associated indexes and other components are using. By analyzing this information, you can determine if there is excessive space usage and take appropriate actions to optimize the storage.
