@@ -1,0 +1,108 @@
+How to check statistics for my table using sp_spaceused in oracle sql?
+ChatGPT
+In Oracle SQL, there is no direct equivalent to the sp_spaceused procedure in SQL Server. However, you can gather detailed statistics about table and index storage using various queries on Oracle's data dictionary views. Here are some useful queries to gather space usage statistics for a specific table in Oracle:
+
+Table Size and Storage Information
+Basic Table Size:
+
+sql
+Copiază codul
+SELECT 
+    segment_name AS table_name, 
+    segment_type, 
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb 
+FROM 
+    user_segments 
+WHERE 
+    segment_name = 'YOUR_TABLE_NAME'
+GROUP BY 
+    segment_name, segment_type;
+Detailed Table Size:
+
+sql
+Copiază codul
+SELECT 
+    table_name,
+    ROUND(num_rows * avg_row_len / (1024 * 1024), 2) AS estimated_size_mb
+FROM 
+    user_tables
+WHERE 
+    table_name = 'YOUR_TABLE_NAME';
+Indexes Size:
+
+sql
+Copiază codul
+SELECT 
+    index_name, 
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb 
+FROM 
+    user_segments 
+WHERE 
+    segment_type = 'INDEX' 
+    AND segment_name IN (SELECT index_name FROM user_indexes WHERE table_name = 'YOUR_TABLE_NAME')
+GROUP BY 
+    index_name;
+Combined Query for Table and Index Sizes
+To get a combined view of the table and its indexes:
+
+sql
+Copiază codul
+SELECT 
+    segment_name AS name, 
+    segment_type, 
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb 
+FROM 
+    user_segments 
+WHERE 
+    segment_name = 'YOUR_TABLE_NAME'
+    OR segment_name IN (SELECT index_name FROM user_indexes WHERE table_name = 'YOUR_TABLE_NAME')
+GROUP BY 
+    segment_name, segment_type;
+Analyzing Storage Usage with DBMS_SPACE
+Oracle provides the DBMS_SPACE package to get detailed space usage statistics. Here’s an example of how you can use it:
+
+Using DBMS_SPACE to Get Table Space Usage:
+sql
+Copiază codul
+DECLARE
+    total_blocks NUMBER;
+    total_bytes NUMBER;
+    unused_blocks NUMBER;
+    unused_bytes NUMBER;
+    last_used_extent_file_id NUMBER;
+    last_used_extent_block_id NUMBER;
+    last_used_block NUMBER;
+BEGIN
+    DBMS_SPACE.UNUSED_SPACE (
+        segment_owner => 'YOUR_SCHEMA_NAME',
+        segment_name  => 'YOUR_TABLE_NAME',
+        segment_type  => 'TABLE',
+        total_blocks  => total_blocks,
+        total_bytes   => total_bytes,
+        unused_blocks => unused_blocks,
+        unused_bytes  => unused_bytes,
+        last_used_extent_file_id => last_used_extent_file_id,
+        last_used_extent_block_id => last_used_extent_block_id,
+        last_used_block => last_used_block
+    );
+    DBMS_OUTPUT.PUT_LINE('Total Blocks: ' || total_blocks);
+    DBMS_OUTPUT.PUT_LINE('Total Bytes: ' || total_bytes);
+    DBMS_OUTPUT.PUT_LINE('Unused Blocks: ' || unused_blocks);
+    DBMS_OUTPUT.PUT_LINE('Unused Bytes: ' || unused_bytes);
+END;
+/
+Statistics Gathering
+Ensure you have up-to-date statistics to get accurate information:
+
+Gather Statistics:
+sql
+Copiază codul
+BEGIN
+    DBMS_STATS.GATHER_TABLE_STATS(
+        ownname => 'YOUR_SCHEMA_NAME', 
+        tabname => 'YOUR_TABLE_NAME', 
+        cascade => TRUE
+    );
+END;
+/
+By using these queries and procedures, you can gather comprehensive statistics and storage usage information for your table in Oracle SQL, similar to what sp_spaceused provides in SQL Server.
