@@ -1,0 +1,122 @@
+Still, with all these statistics I don't know where to look in order to find the explanation for the 75G stored in the table instead of 0.1G. Can you help me?
+ChatGPT
+Certainly! Let's systematically investigate why your table is consuming 75GB instead of the expected 1GB. We'll focus on identifying potential causes such as fragmentation, inefficient storage, excessive indexes, or large objects.
+
+Step-by-Step Investigation
+1. Check Table and Index Sizes
+First, verify the size of the table and its indexes separately. This will help determine if the indexes are contributing significantly to the total size.
+
+sql
+Copiază codul
+-- Size of the table
+SELECT 
+    segment_name AS object_name,
+    segment_type,
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb
+FROM 
+    user_segments
+WHERE 
+    segment_name = 'YOUR_TABLE_NAME'
+GROUP BY 
+    segment_name, segment_type;
+
+-- Size of the indexes on the table
+SELECT 
+    segment_name AS index_name,
+    ROUND(SUM(bytes) / (1024 * 1024), 2) AS size_mb
+FROM 
+    user_segments
+WHERE 
+    segment_type = 'INDEX'
+    AND segment_name IN (SELECT index_name FROM user_indexes WHERE table_name = 'YOUR_TABLE_NAME')
+GROUP BY 
+    segment_name;
+2. Check for Fragmentation
+Fragmentation can cause inefficient use of space. Reorganize or rebuild the table and indexes if necessary.
+
+sql
+Copiază codul
+-- Rebuild the table
+ALTER TABLE your_table_name MOVE;
+
+-- Rebuild the indexes
+BEGIN
+    FOR rec IN (SELECT index_name FROM user_indexes WHERE table_name = 'YOUR_TABLE_NAME') LOOP
+        EXECUTE IMMEDIATE 'ALTER INDEX ' || rec.index_name || ' REBUILD';
+    END LOOP;
+END;
+/
+3. Check for BLOB/CLOB Data
+Large objects (BLOBs or CLOBs) can significantly increase table size. Check if your table contains such columns and their storage usage.
+
+sql
+Copiază codul
+SELECT
+    column_name,
+    data_type,
+    avg_col_len,
+    num_nulls
+FROM 
+    user_tab_columns
+WHERE 
+    table_name = 'YOUR_TABLE_NAME'
+    AND data_type IN ('BLOB', 'CLOB', 'NCLOB');
+If you find such columns, analyze their usage and consider storing large objects outside the database if possible.
+
+4. Analyze Table Statistics
+Ensure statistics are up-to-date and examine the number of rows, average row length, and block usage.
+
+sql
+Copiază codul
+SELECT 
+    table_name,
+    num_rows,
+    blocks,
+    avg_row_len,
+    chain_cnt,
+    last_analyzed
+FROM 
+    user_tables
+WHERE 
+    table_name = 'YOUR_TABLE_NAME';
+5. Check for Unused Space
+Use the DBMS_SPACE.UNUSED_SPACE procedure to check for unused space within the table.
+
+sql
+Copiază codul
+DECLARE
+    total_blocks NUMBER;
+    total_bytes NUMBER;
+    unused_blocks NUMBER;
+    unused_bytes NUMBER;
+    last_used_extent_file_id NUMBER;
+    last_used_extent_block_id NUMBER;
+    last_used_block NUMBER;
+BEGIN
+    DBMS_SPACE.UNUSED_SPACE (
+        segment_owner => 'YOUR_SCHEMA_NAME',
+        segment_name  => 'YOUR_TABLE_NAME',
+        segment_type  => 'TABLE',
+        total_blocks  => total_blocks,
+        total_bytes   => total_bytes,
+        unused_blocks => unused_blocks,
+        unused_bytes  => unused_bytes,
+        last_used_extent_file_id => last_used_extent_file_id,
+        last_used_extent_block_id => last_used_extent_block_id,
+        last_used_block => last_used_block
+    );
+    DBMS_OUTPUT.PUT_LINE('Total Blocks: ' || total_blocks);
+    DBMS_OUTPUT.PUT_LINE('Total Bytes: ' || total_bytes);
+    DBMS_OUTPUT.PUT_LINE('Unused Blocks: ' || unused_blocks);
+    DBMS_OUTPUT.PUT_LINE('Unused Bytes: ' || unused_bytes);
+END;
+/
+Summary
+By following these steps, you can identify the primary contributors to the large size of your table. Here's a recap of what you should do:
+
+Check the sizes of the table and indexes.
+Rebuild the table and indexes to eliminate fragmentation.
+Identify and analyze large objects (BLOB/CLOB).
+Review table statistics for row count, average row length, and block usage.
+Use DBMS_SPACE.UNUSED_SPACE to find unused space within the table.
+If you still cannot identify the issue, consider whether there could be external factors, such as database settings, storage configurations, or specific application behaviors that might be impacting table size.
