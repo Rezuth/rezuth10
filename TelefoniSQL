@@ -28,3 +28,25 @@ SELECT
   EXTRACT(YEAR FROM (end_date - start_date) YEAR TO MONTH) * 12 +
   EXTRACT(MONTH FROM (end_date - start_date) YEAR TO MONTH) AS months_difference
 FROM your_table;
+
+
+WITH date_parts AS (
+  SELECT
+    EXTRACT(YEAR FROM end_date) AS end_year,
+    EXTRACT(MONTH FROM end_date) AS end_month,
+    EXTRACT(DAY FROM end_date) AS end_day,
+    EXTRACT(YEAR FROM start_date) AS start_year,
+    EXTRACT(MONTH FROM start_date) AS start_month,
+    EXTRACT(DAY FROM start_date) AS start_day
+  FROM your_table
+)
+SELECT
+  ((end_year - start_year) * 12 + (end_month - start_month) -
+  CASE
+    WHEN end_day < start_day THEN 1 ELSE 0
+  END) AS months_difference
+FROM date_parts;
+
+
+
+
