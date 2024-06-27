@@ -50,3 +50,30 @@ FROM date_parts;
 
 
 
+
+
+
+
+
+
+
+WITH date_parts AS (
+  SELECT
+    TO_DATE('2033-09-30', 'YYYY-MM-DD') AS end_date,
+    TO_DATE('2003-07-23', 'YYYY-MM-DD') AS start_date,
+    EXTRACT(YEAR FROM TO_DATE('2033-09-30', 'YYYY-MM-DD')) AS end_year,
+    EXTRACT(MONTH FROM TO_DATE('2033-09-30', 'YYYY-MM-DD')) AS end_month,
+    EXTRACT(DAY FROM TO_DATE('2033-09-30', 'YYYY-MM-DD')) AS end_day,
+    EXTRACT(YEAR FROM TO_DATE('2003-07-23', 'YYYY-MM-DD')) AS start_year,
+    EXTRACT(MONTH FROM TO_DATE('2003-07-23', 'YYYY-MM-DD')) AS start_month,
+    EXTRACT(DAY FROM TO_DATE('2003-07-23', 'YYYY-MM-DD')) AS start_day
+  FROM dual
+)
+SELECT
+  ((end_year - start_year) * 12 + (end_month - start_month) -
+  CASE
+    WHEN end_day < start_day THEN 1 ELSE 0
+  END) AS months_difference
+FROM date_parts;
+
+
