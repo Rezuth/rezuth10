@@ -1,0 +1,20 @@
+import java.util.Base64;
+
+public class Base64Decoder {
+    public static void main(String[] args) {
+        // Example Base64 string with illegal characters
+        String encodedString = "aGVsbG8gd29ybGQh$%^"; // "hello world!" + illegal characters
+
+        // Clean the input string by removing illegal characters
+        String cleanedString = encodedString.replaceAll("[^A-Za-z0-9+/=]", "");
+
+        try {
+            // Decode the cleaned Base64 string
+            byte[] decodedBytes = Base64.getDecoder().decode(cleanedString);
+            String decodedString = new String(decodedBytes);
+            System.out.println("Decoded string: " + decodedString);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid Base64 input: " + e.getMessage());
+        }
+    }
+}
