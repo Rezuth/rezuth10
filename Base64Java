@@ -57,3 +57,64 @@ public class Base64DERDecoder {
         }
     }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Base64;
+
+import org.bouncycastle.asn1.ASN1InputStream;
+import org.bouncycastle.asn1.ASN1Primitive;
+
+public class Base64FileDERDecoder {
+    public static void main(String[] args) {
+        String filePath = "path/to/your/base64file.txt";
+
+        try {
+            // Read Base64 data from the file
+            String base64Data = new String(Files.readAllBytes(Paths.get(filePath)));
+
+            // Clean the input string
+            String cleanedData = base64Data.replaceAll("[^A-Za-z0-9+/=]", "");
+
+            // Decode the Base64 data
+            byte[] decodedBytes = Base64.getDecoder().decode(cleanedData);
+
+            // Parse the DER data
+            parseDERData(decodedBytes);
+        } catch (IOException e) {
+            System.err.println("Error reading file: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid Base64 input: " + e.getMessage());
+        }
+    }
+
+    public static void parseDERData(byte[] derData) {
+        try (ASN1InputStream asn1InputStream = new ASN1InputStream(derData)) {
+            ASN1Primitive asn1Primitive = asn1InputStream.readObject();
+            // Process the ASN1Primitive as needed
+            System.out.println("Parsed DER data: " + asn1Primitive);
+        } catch (Exception e) {
+            System.err.println("Error parsing DER data: " + e.getMessage());
+        }
+    }
+}
