@@ -21,7 +21,10 @@ public class Base64Decoder {
 
 
 
-
+int paddingCount = (4 - (cleanedData.length() % 4)) % 4;
+            for (int i = 0; i < paddingCount; i++) {
+                cleanedData += "=";
+            }
 
 
 
