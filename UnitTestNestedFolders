@@ -1,0 +1,52 @@
+
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+public class FileListerTest {
+
+    @TempDir
+    Path tempDir;
+
+    @Test
+    public void testListFiles() throws IOException {
+        // Setup: create a nested directory structure in the temporary directory
+        Path dataDir = tempDir.resolve("data");
+        Files.createDirectory(dataDir);
+
+        Path file1 = dataDir.resolve("file1.txt");
+        Files.createFile(file1);
+
+        Path data2Dir = dataDir.resolve("data2");
+        Files.createDirectory(data2Dir);
+
+        Path file2 = data2Dir.resolve("file2.txt");
+        Files.createFile(file2);
+
+        Path data3Dir = data2Dir.resolve("data3");
+        Files.createDirectory(data3Dir);
+
+        Path file3 = data3Dir.resolve("file3.txt");
+        Files.createFile(file3);
+
+        // Create an instance of FileLister
+        FileLister fileLister = new FileLister();
+
+        // Act: call the listFiles method
+        List<String> files = fileLister.listFiles(dataDir.toString());
+
+        // Assert: verify the output
+        assertEquals(3, files.size());
+        assertTrue(files.contains(file1.toAbsolutePath().toString()));
+        assertTrue(files.contains(file2.toAbsolutePath().toString()));
+        assertTrue(files.contains(file3.toAbsolutePath().toString()));
+    }
+}
