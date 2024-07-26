@@ -1,0 +1,34 @@
+
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+public class FileLister {
+
+    public List<String> listFiles(String folderName) {
+        List<String> fileList = null;
+
+        try (Stream<Path> paths = Files.walk(Paths.get(folderName))) {
+            fileList = paths
+                    .parallel() // Enable parallel processing
+                    .filter(Files::isRegularFile) // Only include regular files
+                    .map(path -> path.toAbsolutePath().toString()) // Convert Path to String
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return fileList;
+    }
+
+    public static void main(String[] args) {
+        FileLister fileLister = new FileLister();
+        List<String> files = fileLister.listFiles("data");
+        files.forEach(System.out::println);
+    }
+}
