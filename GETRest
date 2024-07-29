@@ -1,0 +1,46 @@
+
+package com.example.ms2.service;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.ResourceAccessException;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.Collections;
+import java.util.List;
+
+@Service
+public class ProviderService {
+
+    private final RestTemplate restTemplate;
+    private final String ms1Url;
+
+    public ProviderService(RestTemplate restTemplate, @Value("${ms1.url}") String ms1Url) {
+        this.restTemplate = restTemplate;
+        this.ms1Url = ms1Url;
+    }
+
+    public List<String> getStringList() {
+        String url = ms1Url + "/getStrings";
+        try {
+            ResponseEntity<List<String>> response = restTemplate.exchange(
+                url,
+                org.springframework.http.HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<String>>() {}
+            );
+            return response.getBody();
+        } catch (ResourceAccessException e) {
+            System.err.println("Could not reach ms1: " + e.getMessage());
+            // Handle the exception by returning an empty list or some default value
+            return Collections.emptyList();
+        } catch (RestClientException e) {
+            System.err.println("Error occurred while calling ms1: " + e.getMessage());
+            // Handle other potential RestClientExceptions
+            return Collections.emptyList();
+        }
+    }
+}
