@@ -1,0 +1,9 @@
+
+private boolean isEmptyDirectory(Path path) {
+        try (Stream<Path> entries = Files.list(path)) {
+            return !entries.findFirst().isPresent(); // Return true if directory is empty
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
