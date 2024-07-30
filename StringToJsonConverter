@@ -1,0 +1,32 @@
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
+import java.util.Arrays;
+import java.util.List;
+
+public class JsonExample {
+    public static void main(String[] args) {
+        try {
+            // Create a list of strings
+            List<String> stringList = Arrays.asList("ex1", "ex2");
+
+            // Create an ObjectMapper instance
+            ObjectMapper objectMapper = new ObjectMapper();
+
+            // Create an ObjectNode
+            ObjectNode objectNode = objectMapper.createObjectNode();
+
+            // Add the list to the "exFinal" field
+            objectNode.putPOJO("exFinal", stringList);
+
+            // Convert the ObjectNode to a JSON string
+            String jsonString = objectMapper.writeValueAsString(objectNode);
+
+            // Print the JSON string
+            System.out.println(jsonString);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
