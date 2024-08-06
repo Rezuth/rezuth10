@@ -1,0 +1,131 @@
+READ FILES/FOLDERS/ZIP:
+
+
+
+import org.springframework.stereotype.Service;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.zip.ZipFile;
+
+@Service
+public class FolderService {
+
+    private static final Pattern DATE_PATTERN = Pattern.compile("\\b(\\d{8})\\b");
+
+    public List<String> extractDatesFromFolder(String folderName) {
+        List<String> dates = new ArrayList<>();
+        File folder = new File(folderName);
+
+        if (!folder.exists() || !folder.isDirectory()) {
+            throw new IllegalArgumentException("The provided path is not a directory or does not exist");
+        }
+
+        File[] files = folder.listFiles();
+        if (files == null) {
+            throw new IllegalArgumentException("The provided directory is empty or an error occurred while reading it");
+        }
+
+        for (File file : files) {
+            String fileName = file.getName();
+            Matcher matcher = DATE_PATTERN.matcher(fileName);
+
+            if (matcher.find()) {
+                dates.add(matcher.group(1));
+            }
+
+            if (file.isFile() && fileName.endsWith(".zip")) {
+                dates.addAll(extractDatesFromZip(file));
+            }
+        }
+
+        return dates;
+    }
+
+    private List<String> extractDatesFromZip(File zipFile) {
+        List<String> dates = new ArrayList<>();
+
+        try (ZipFile zip = new ZipFile(zipFile)) {
+            zip.stream().forEach(entry -> {
+                String entryName = entry.getName();
+                Matcher matcher = DATE_PATTERN.matcher(entryName);
+                if (matcher.find()) {
+                    dates.add(matcher.group(1));
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return dates;
+    }
+}
+
+
+
+
+
+UNIT TEST:
+
+
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
+import java.io.File;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+public class FolderServiceTest {
+
+    @InjectMocks
+    private FolderService folderService;
+
+    @Mock
+    private File mockFolder;
+
+    @Mock
+    private File mockFile1;
+
+    @Mock
+    private File mockFile2;
+
+    @Mock
+    private File mockFile3;
+
+    @BeforeEach
+    public void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testExtractDatesFromFolder() {
+        when(mockFolder.exists()).thenReturn(true);
+        when(mockFolder.isDirectory()).thenReturn(true);
+        when(mockFolder.listFiles()).thenReturn(new File[]{mockFile1, mockFile2, mockFile3});
+
+        when(mockFile1.getName()).thenReturn("folder20220101test1");
+        when(mockFile2.getName()).thenReturn("archive20230823tes2.zip");
+        when(mockFile3.getName()).thenReturn("file20230510.txt");
+
+        when(mockFile1.isFile()).thenReturn(false);
+        when(mockFile2.isFile()).thenReturn(true);
+        when(mockFile3.isFile()).thenReturn(true);
+
+        List<String> dates = folderService.extractDatesFromFolder(mockFolder.getAbsolutePath());
+
+        assertEquals(3, dates.size());
+        assertEquals("20220101", dates.get(0));
+        assertEquals("20230823", dates.get(1));
+        assertEquals("20230510", dates.get(2));
+    }
+}
