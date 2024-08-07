@@ -1,0 +1,101 @@
+DEFAULT FORMAT CONVERTION:
+
+
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+public class DateFormatter {
+
+    public static String defaultFormat(String date) {
+        LocalDate localDate;
+        
+        // Define the possible date formats
+        DateTimeFormatter[] possibleFormatters = {
+            DateTimeFormatter.ofPattern("yyyyMMdd"),
+            DateTimeFormatter.ofPattern("ddMMyyyy"),
+            DateTimeFormatter.ofPattern("yyyyMM"),
+            DateTimeFormatter.ofPattern("MMyyyy")
+        };
+
+        // Try parsing the input date string with the defined formatters
+        for (DateTimeFormatter formatter : possibleFormatters) {
+            try {
+                if (formatter.equals(DateTimeFormatter.ofPattern("yyyyMMdd")) || formatter.equals(DateTimeFormatter.ofPattern("ddMMyyyy"))) {
+                    localDate = LocalDate.parse(date, formatter);
+                } else {
+                    localDate = LocalDate.parse(date + "01", formatter);
+                }
+                return localDate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            } catch (DateTimeParseException e) {
+                // Continue to try the next format
+            }
+        }
+
+        // If none of the formats matched, throw an exception
+        throw new IllegalArgumentException("Invalid date format: " + date);
+    }
+
+    public static void main(String[] args) {
+        // Test cases
+        System.out.println(defaultFormat("20220130")); // Output: 20220130
+        System.out.println(defaultFormat("30012022")); // Output: 20220130
+        System.out.println(defaultFormat("202201"));   // Output: 20220101
+        System.out.println(defaultFormat("012022"));   // Output: 20220101
+    }
+}
+
+
+
+
+
+
+TEST TWO DATES WITH MONTH ONLY:
+
+
+
+
+
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.format.DateTimeFormatter;
+
+public class DateComparison {
+
+    public static boolean isMonthBefore(LocalDate date1, LocalDate date2) {
+        // Extract year and month from both dates
+        int year1 = date1.getYear();
+        int month1 = date1.getMonthValue();
+        int year2 = date2.getYear();
+        int month2 = date2.getMonthValue();
+        
+        // Compare year and month
+        if (year1 < year2) {
+            return true;
+        } else if (year1 == year2) {
+            return month1 < month2;
+        } else {
+            return false;
+        }
+    }
+
+    public static void main(String[] args) {
+        // Define LocalDate objects
+        LocalDate date1 = LocalDate.parse("20220101", DateTimeFormatter.BASIC_ISO_DATE);
+        LocalDate date2 = LocalDate.parse("20220202", DateTimeFormatter.BASIC_ISO_DATE);
+        
+        // Check if date1 is before date2 considering only year and month
+        boolean result = isMonthBefore(date1, date2);
+        
+        System.out.println("Is date1 before date2 based on month and year? " + result);
+        
+        // Example with the same month and different days
+        LocalDate date3 = LocalDate.parse("20220201", DateTimeFormatter.BASIC_ISO_DATE);
+        LocalDate date4 = LocalDate.parse("20220202", DateTimeFormatter.BASIC_ISO_DATE);
+        
+        boolean result2 = isMonthBefore(date3, date4);
+        
+        System.out.println("Is date3 before date4 based on month and year? " + result2);
+    }
+}
