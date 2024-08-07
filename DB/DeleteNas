@@ -67,9 +67,11 @@ public class FolderService {
     }
 
     private void deleteFileOrFolder(DiskShare share, String folderName, String fileName) throws IOException {
-        String fullPath = folderName + "\\" + fileName;
-        if (share.fileExists(fullPath) || share.folderExists(fullPath)) {
-            share.rm(fullPath);
+        String fullPath = Paths.get(folderName, fileName).toString().replace("/", "\\");
+        if (share.folderExists(fullPath)) {
+            share.rmdir(fullPath, true); // Recursively delete folder
+        } else if (share.fileExists(fullPath)) {
+            share.rm(fullPath); // Delete regular file or zip file
         }
     }
 }
