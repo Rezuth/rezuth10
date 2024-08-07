@@ -2,68 +2,78 @@ READ FILES/FOLDERS/ZIP:
 
 
 
+import com.hierynomus.msdtyp.AccessMask;
+import com.hierynomus.msfscc.fileinformation.FileIdBothDirectoryInformation;
+import com.hierynomus.protocol.commons.EnumWithValue.EnumUtils;
+import com.hierynomus.smbj.SMBClient;
+import com.hierynomus.smbj.auth.AuthenticationContext;
+import com.hierynomus.smbj.connection.Connection;
+import com.hierynomus.smbj.session.Session;
+import com.hierynomus.smbj.share.DiskShare;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.zip.ZipFile;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Service
 public class FolderService {
 
     private static final Pattern DATE_PATTERN = Pattern.compile("\\b(\\d{8})\\b");
+    private static final Logger LOGGER = Logger.getLogger(FolderService.class.getName());
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 
-    public List<String> extractDatesFromFolder(String folderName) {
-        List<String> dates = new ArrayList<>();
-        File folder = new File(folderName);
+    public void deleteOldFilesAndFolders(String folderName) {
+        try (SMBClient client = new SMBClient()) {
+            try (Connection connection = client.connect("your-smb-server")) {
+                AuthenticationContext ac = new AuthenticationContext("username", "password".toCharArray(), "domain");
+                Session session = connection.authenticate(ac);
 
-        if (!folder.exists() || !folder.isDirectory()) {
-            throw new IllegalArgumentException("The provided path is not a directory or does not exist");
-        }
+                try (DiskShare share = (DiskShare) session.connectShare("your-share")) {
+                    if (!share.folderExists(folderName)) {
+                        throw new IllegalArgumentException("The provided path is not a directory or does not exist");
+                    }
 
-        File[] files = folder.listFiles();
-        if (files == null) {
-            throw new IllegalArgumentException("The provided directory is empty or an error occurred while reading it");
-        }
+                    List<FileIdBothDirectoryInformation> files = share.list(folderName, "*");
 
-        for (File file : files) {
-            String fileName = file.getName();
-            Matcher matcher = DATE_PATTERN.matcher(fileName);
+                    LocalDate currentDate = LocalDate.now();
 
-            if (matcher.find()) {
-                dates.add(matcher.group(1));
+                    for (FileIdBothDirectoryInformation fileInfo : files) {
+                        try {
+                            String fileName = fileInfo.getFileName();
+                            Matcher matcher = DATE_PATTERN.matcher(fileName);
+
+                            if (matcher.find()) {
+                                LocalDate fileDate = LocalDate.parse(matcher.group(1), DATE_FORMATTER);
+                                if (ChronoUnit.YEARS.between(fileDate, currentDate) > 2) {
+                                    deleteFileOrFolder(share, folderName, fileName);
+                                }
+                            }
+                        } catch (Exception e) {
+                            LOGGER.log(Level.WARNING, "Error processing file: " + fileInfo.getFileName(), e);
+                        }
+                    }
+                }
             }
-
-            if (file.isFile() && fileName.endsWith(".zip")) {
-                dates.addAll(extractDatesFromZip(file));
-            }
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Error accessing folder: " + folderName, e);
         }
-
-        return dates;
     }
 
-    private List<String> extractDatesFromZip(File zipFile) {
-        List<String> dates = new ArrayList<>();
-
-        try (ZipFile zip = new ZipFile(zipFile)) {
-            zip.stream().forEach(entry -> {
-                String entryName = entry.getName();
-                Matcher matcher = DATE_PATTERN.matcher(entryName);
-                if (matcher.find()) {
-                    dates.add(matcher.group(1));
-                }
-            });
-        } catch (IOException e) {
-            e.printStackTrace();
+    private void deleteFileOrFolder(DiskShare share, String folderName, String fileName) throws IOException {
+        String fullPath = folderName + "\\" + fileName;
+        if (share.fileExists(fullPath) || share.folderExists(fullPath)) {
+            share.rm(fullPath);
         }
-
-        return dates;
     }
 }
+
 
 
 
@@ -73,17 +83,19 @@ UNIT TEST:
 
 
 
+import com.hierynomus.smbj.share.DiskShare;
+import com.hierynomus.smbj.share.FileIdBothDirectoryInformation;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
-import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class FolderServiceTest {
 
@@ -91,16 +103,16 @@ public class FolderServiceTest {
     private FolderService folderService;
 
     @Mock
-    private File mockFolder;
+    private DiskShare diskShare;
 
     @Mock
-    private File mockFile1;
+    private FileIdBothDirectoryInformation mockFile1;
 
     @Mock
-    private File mockFile2;
+    private FileIdBothDirectoryInformation mockFile2;
 
     @Mock
-    private File mockFile3;
+    private FileIdBothDirectoryInformation mockFile3;
 
     @BeforeEach
     public void setUp() {
@@ -108,24 +120,24 @@ public class FolderServiceTest {
     }
 
     @Test
-    public void testExtractDatesFromFolder() {
-        when(mockFolder.exists()).thenReturn(true);
-        when(mockFolder.isDirectory()).thenReturn(true);
-        when(mockFolder.listFiles()).thenReturn(new File[]{mockFile1, mockFile2, mockFile3});
+    public void testDeleteOldFilesAndFolders() throws IOException {
+        String folderName = "testFolder";
+        when(diskShare.folderExists(folderName)).thenReturn(true);
 
-        when(mockFile1.getName()).thenReturn("folder20220101test1");
-        when(mockFile2.getName()).thenReturn("archive20230823tes2.zip");
-        when(mockFile3.getName()).thenReturn("file20230510.txt");
+        when(mockFile1.getFileName()).thenReturn("folder20220101test1");
+        when(mockFile2.getFileName()).thenReturn("archive20200101.zip");
+        when(mockFile3.getFileName()).thenReturn("file20230510.txt");
 
-        when(mockFile1.isFile()).thenReturn(false);
-        when(mockFile2.isFile()).thenReturn(true);
-        when(mockFile3.isFile()).thenReturn(true);
+        List<FileIdBothDirectoryInformation> files = Arrays.asList(mockFile1, mockFile2, mockFile3);
+        when(diskShare.list(folderName, "*")).thenReturn(files);
 
-        List<String> dates = folderService.extractDatesFromFolder(mockFolder.getAbsolutePath());
+        doNothing().when(diskShare).rm(folderName + "\\folder20220101test1");
+        doNothing().when(diskShare).rm(folderName + "\\archive20200101.zip");
 
-        assertEquals(3, dates.size());
-        assertEquals("20220101", dates.get(0));
-        assertEquals("20230823", dates.get(1));
-        assertEquals("20230510", dates.get(2));
+        folderService.deleteOldFilesAndFolders(folderName);
+
+        verify(diskShare, times(1)).rm(folderName + "\\folder20220101test1"); // The folder20220101test1 should be deleted
+        verify(diskShare, times(1)).rm(folderName + "\\archive20200101.zip"); // The archive20200101.zip should be deleted
+        verify(diskShare, never()).rm(folderName + "\\file20230510.txt"); // The file20230510.txt should not be deleted
     }
 }
