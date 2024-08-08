@@ -47,6 +47,62 @@ public class DateFormatter {
 }
 
 
+OOOOOOOOOOOOOOOOOOOOOOR:
+
+
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+
+public class DateFormatter {
+
+    public static String defaultFormat(String date) {
+        // Define the potential formats
+        DateTimeFormatter[] formatters = {
+            DateTimeFormatter.ofPattern("yyyyMMdd"),
+            DateTimeFormatter.ofPattern("ddMMyyyy"),
+            DateTimeFormatter.ofPattern("yyyyMM"),
+            DateTimeFormatter.ofPattern("MMyyyy")
+        };
+
+        LocalDate localDate = null;
+
+        for (DateTimeFormatter formatter : formatters) {
+            try {
+                if (formatter == formatters[2] || formatter == formatters[3]) {
+                    // yyyyMM or MMyyyy format
+                    localDate = LocalDate.parse(date, formatter);
+                    localDate = localDate.withDayOfMonth(1);
+                } else {
+                    localDate = LocalDate.parse(date, formatter);
+                }
+                break; // if parsing is successful, exit the loop
+            } catch (DateTimeParseException e) {
+                // continue to the next formatter
+            }
+        }
+
+        if (localDate == null) {
+            throw new IllegalArgumentException("Invalid date format: " + date);
+        }
+
+        // Define the output formatter
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern("yyyyMMdd");
+
+        // Return the date in yyyyMMdd format
+        return localDate.format(outputFormatter);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(defaultFormat("20220130")); // 20220130
+        System.out.println(defaultFormat("30012022")); // 20220130
+        System.out.println(defaultFormat("202201"));   // 20220101
+        System.out.println(defaultFormat("012022"));   // 20220101
+    }
+}
+
+
 
 
 
