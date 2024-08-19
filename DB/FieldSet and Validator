@@ -1,0 +1,82 @@
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+import org.springframework.batch.item.file.transform.FieldSet;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
+
+public class UserServiceTest {
+
+    // Test method for scenario where name is "BOB"
+    @Test
+    public void givenNameIsBob_whenCheckName_thenReturnBob() {
+        // Arrange
+        FieldSet mockFieldSet = Mockito.mock(FieldSet.class);
+        when(mockFieldSet.readString("name")).thenReturn("BOB");
+        
+        UserService userService = new UserService();
+
+        // Act
+        String result = userService.checkName(mockFieldSet);
+
+        // Assert
+        assertEquals("BOB", result, "Expected to return 'BOB' when name is 'BOB'");
+    }
+
+    // Test method for scenario where name is not "BOB"
+    @Test
+    public void givenNameIsNotBob_whenCheckName_thenReturnNA() {
+        // Arrange
+        FieldSet mockFieldSet = Mockito.mock(FieldSet.class);
+        when(mockFieldSet.readString("name")).thenReturn("ALICE");
+        
+        UserService userService = new UserService();
+
+        // Act
+        String result = userService.checkName(mockFieldSet);
+
+        // Assert
+        assertEquals("N/A", result, "Expected to return 'N/A' when name is not 'BOB'");
+    }
+}
+
+|
+|
+|
+|
+VALIDATOR:
+|
+|
+|
+|
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
+import jakarta.validation.ValidatorFactory;
+
+import java.util.Set;
+
+public class Main {
+    public static void main(String[] args) {
+        // Create a ValidatorFactory and Validator
+        ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
+        Validator validator = factory.getValidator();
+
+        // Create a MyDto instance with a null name
+        MyDto dto = new MyDto();
+
+        // Validate the DTO
+        Set<ConstraintViolation<MyDto>> violations = validator.validate(dto);
+
+        // Check if there are any constraint violations
+        if (!violations.isEmpty()) {
+            for (ConstraintViolation<MyDto> violation : violations) {
+                System.out.println(violation.getMessage());
+            }
+        } else {
+            System.out.println("No constraint violations found.");
+        }
+    }
+}
+
