@@ -1,0 +1,32 @@
+
+import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
+import org.springframework.batch.item.file.transform.FieldSet;
+
+public class MyDtoFieldSetMapper extends BeanWrapperFieldSetMapper<MyDto> {
+
+    public MyDtoFieldSetMapper() {
+        this.setTargetType(MyDto.class);
+        this.setStrict(false);
+    }
+
+    @Override
+    public MyDto mapFieldSet(FieldSet fieldSet) {
+        MyDto myDto = super.mapFieldSet(fieldSet);
+
+        // Process the ID field using processString
+        if (myDto.getId() != null) {
+            myDto.setId(processString(fieldSet.readString(MyDtoFieldEnum.ID.name())));
+        }
+
+        return myDto;
+    }
+
+    private String processString(String input) {
+        String modifiedString = input.replaceFirst("T03", "");
+        int index = 1;
+        while (index < modifiedString.length() && modifiedString.charAt(index) == '5') {
+            index++;
+        }
+        return modifiedString.substring(index);
+    }
+}
