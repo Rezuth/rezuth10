@@ -1,0 +1,72 @@
+import org.springframework.batch.item.ItemProcessor;
+
+public class MyDtoProcessor implements ItemProcessor<MyDto, MyDto> {
+
+    @Override
+    public MyDto process(MyDto item) throws Exception {
+        // Process the item (e.g., clean up the ID field)
+        String processedId = processString(item.getId());
+        item.setId(processedId);
+        
+        return item;  // Return the processed item, or return null to skip
+    }
+
+    private String processString(String input) {
+        String modifiedString = input.replaceFirst("T03", "");
+        int index = 1;
+        while (index < modifiedString.length() && modifiedString.charAt(index) == '5') {
+            index++;
+        }
+        return modifiedString.substring(index);
+    }
+}
+
+
+THE UNIT TEST:
+
+
+
+import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
+
+class MyDtoProcessorTest {
+
+    private final MyDtoProcessor processor = new MyDtoProcessor();
+
+    @Test
+    void testProcess_withId() throws Exception {
+        MyDto input = new MyDto();
+        input.setName("Mike");
+        input.setId("T03555Alex1");
+
+        MyDto result = processor.process(input);
+
+        assertNotNull(result);
+        assertEquals("Alex1", result.getId());
+    }
+
+    @Test
+    void testProcess_withoutId() throws Exception {
+        MyDto input = new MyDto();
+        input.setName("Mike");
+        input.setId(null);
+
+        MyDto result = processor.process(input);
+
+        assertNotNull(result);
+        assertNull(result.getId());
+    }
+
+    @Test
+    void testProcess_withEmptyId() throws Exception {
+        MyDto input = new MyDto();
+        input.setName("Mike");
+        input.setId("");
+
+        MyDto result = processor.process(input);
+
+        assertNotNull(result);
+        assertEquals("", result.getId());
+    }
+}
+
