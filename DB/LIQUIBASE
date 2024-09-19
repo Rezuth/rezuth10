@@ -1,0 +1,13 @@
+<changeSet id="1" author="your_name">
+    <!-- Add new column COLX with a default value based on the value of COLA -->
+    <addColumn tableName="your_table_name">
+        <column name="COLX" type="NUMBER(1)">
+            <constraints nullable="false"/>
+        </column>
+    </addColumn>
+
+    <!-- Update the new COLX column based on the value of COLA -->
+    <update tableName="your_table_name">
+        <column name="COLX" valueComputed="CASE WHEN COLA = 'YES' THEN 0 ELSE 1 END"/>
+    </update>
+</changeSet>
