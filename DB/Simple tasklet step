@@ -59,3 +59,46 @@ public class BatchConfig {
             .build();
     }
 }
+
+
+.
+.
+.
+.
+.
+
+
+
+
+
+
+
+@Bean
+public Step testStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+    StepBuilder stepBuilder = new StepBuilder("testStep", jobRepository);
+
+    Tasklet checkMyStepTasklet = (contribution, chunkContext) -> {
+        // Retrieve the JobExecution from the StepExecution
+        StepExecution currentStepExecution = contribution.getStepExecution();
+        JobExecution jobExecution = currentStepExecution.getJobExecution();
+
+        // Directly retrieve the StepExecution for 'myStep' from the JobRepository
+        StepExecution myStepExecution = jobRepository.getLastStepExecution(jobExecution.getJobInstance(), "myStep");
+
+        if (myStepExecution != null && myStepExecution.getStatus().isComplete()) {
+            log.info("myStep has been completed successfully.");
+        } else if (myStepExecution != null) {
+            log.info("myStep has not been completed successfully.");
+        } else {
+            log.warn("myStep has not been executed.");
+        }
+
+        return RepeatStatus.FINISHED;
+    };
+
+    // Build and return the TaskletStep
+    return stepBuilder
+        .tasklet(checkMyStepTasklet, transactionManager)
+        .build();
+}
+
