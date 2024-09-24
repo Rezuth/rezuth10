@@ -4,9 +4,10 @@ import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
-import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.builder.StepBuilder;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.step.tasklet.TaskletStep;
 import org.springframework.batch.repeat.RepeatStatus;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,23 +23,29 @@ public class BatchConfig {
     @Bean
     public Step myStep(StepBuilderFactory stepBuilderFactory, PlatformTransactionManager transactionManager) {
         return stepBuilderFactory.get("myStep")
-            .<String, String>chunk(10)  // Define the chunk size and types
+            .<String, String>chunk(10)
             .reader(() -> null)         // Dummy reader
             .processor(item -> item)    // Dummy processor
             .writer(items -> log.info("Writing items: " + items))  // Dummy writer
-            .transactionManager(transactionManager)  // Ensure transaction support
+            .transactionManager(transactionManager)
             .build();
     }
 
-    // Tasklet-based step to include custom logic (like logging)
+    // Custom Tasklet logic using TaskletStep
     @Bean
-    public Step testStep(StepBuilderFactory stepBuilderFactory) {
-        return stepBuilderFactory.get("testStep")
+    public Step testStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+        // Using StepBuilder directly with the JobRepository
+        StepBuilder stepBuilder = new StepBuilder("testStep", jobRepository);
+
+        // Creating a TaskletStep with custom logic
+        TaskletStep taskletStep = stepBuilder
             .tasklet((contribution, chunkContext) -> {
-                log.info("Just a test to see if I can add custom logic in a job builder");
+                log.info("Just a test to see if I can add custom logic in a job builder using TaskletStep");
                 return RepeatStatus.FINISHED;
-            })
+            }, transactionManager)  // Provide transaction management
             .build();
+
+        return taskletStep;
     }
 
     // Job that combines the two steps: myStep and testStep
