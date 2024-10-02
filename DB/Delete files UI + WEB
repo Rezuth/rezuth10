@@ -92,17 +92,19 @@ public class FileService {
 
 
 <div ng-app="myApp" ng-controller="MyController as ctrl">
-    <button ng-click="ctrl.toggleList()">Toggle List</button>
+    <table>
+        <tr ng-repeat="item in ctrl.items">
+            <!-- Display the string -->
+            <td>{{ item }}</td>
 
-    <!-- List that is shown/hidden -->
-    <ul ng-show="ctrl.isListVisible">
-        <li ng-repeat="item in ctrl.items">
-            {{ item }}
-            <!-- 'X' symbol as the delete button -->
-            <span ng-click="ctrl.deleteItem($index)" style="cursor: pointer; color: red; margin-left: 10px;">&#10006;</span>
-        </li>
-    </ul>
+            <!-- Conditional 'X' button, shown only if the string ends with 'PROC' -->
+            <td ng-if="item.endsWith('PROC')">
+                <span ng-click="ctrl.deleteItem($index)" style="cursor: pointer; color: red; margin-left: 10px;">&#10006;</span>
+            </td>
+        </tr>
+    </table>
 </div>
+
 
 
 
