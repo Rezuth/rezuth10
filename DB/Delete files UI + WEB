@@ -1,0 +1,108 @@
+import java.io.File;
+
+import java.io.File;
+
+public class FileService {
+
+    // Method to delete a file from the mounted PVC
+    public boolean deleteFileFromPVC(String filePath) {
+        // Create a File object pointing to the file in the PVC mount
+        File file = new File(filePath);
+
+        // Check if the file exists
+        if (file.exists()) {
+            // Check if it's a file, not a directory
+            if (file.isFile()) {
+                // Delete the file and return the result
+                return file.delete();
+            } else {
+                System.out.println("Cannot delete, it's a folder: " + filePath);
+                return false;
+            }
+        } else {
+            System.out.println("File not found: " + filePath);
+            return false;
+        }
+    }
+}
+
+
+
+
+
+
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class FileController {
+
+    private final FileService fileService;
+
+    public FileController(FileService fileService) {
+        this.fileService = fileService;
+    }
+
+    @DeleteMapping("/delete-file")
+    public String deleteFile(@RequestParam String filePath) {
+        boolean result = fileService.deleteFileFromPVC(filePath);
+
+        if (result) {
+            return "File deleted successfully!";
+        } else {
+            return "File deletion failed or file not found!";
+        }
+    }
+}
+
+
+
+
+
+
+<div ng-app="myApp" ng-controller="MyController as ctrl">
+    <button ng-click="ctrl.toggleList()">Toggle List</button>
+
+    <!-- List that is shown/hidden -->
+    <ul ng-show="ctrl.isListVisible">
+        <li ng-repeat="item in ctrl.items">
+            {{ item }}
+            <!-- 'X' symbol as the delete button -->
+            <span ng-click="ctrl.deleteItem($index)" style="cursor: pointer; color: red; margin-left: 10px;">&#10006;</span>
+        </li>
+    </ul>
+</div>
+
+
+
+
+
+module myApp {
+    export class MyController {
+        public isListVisible: boolean;
+        public items: string[];
+
+        constructor() {
+            // Initially, the list is hidden
+            this.isListVisible = false;
+
+            // List of items
+            this.items = ['Item 1', 'Item 2', 'Item 3'];
+        }
+
+        // Function to toggle the visibility of the list
+        public toggleList(): void {
+            this.isListVisible = !this.isListVisible;
+        }
+
+        // Function to delete an item from the list
+        public deleteItem(index: number): void {
+            this.items.splice(index, 1);
+        }
+    }
+
+    // Register the controller with the AngularJS app
+    angular.module('myApp', [])
+        .controller('MyController', MyController);
+}
