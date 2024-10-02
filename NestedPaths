@@ -11,20 +11,24 @@ import java.util.stream.Stream;
 public class FileLister {
 
     public List<String> listFiles(String folderName) {
-        List<String> fileList = null;
+    List<String> fileList = null;
 
-        try (Stream<Path> paths = Files.walk(Paths.get(folderName))) {
-            fileList = paths
-                    .parallel() // Enable parallel processing
-                    .filter(Files::isRegularFile) // Only include regular files
-                    .map(path -> path.toAbsolutePath().toString()) // Convert Path to String
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return fileList;
+    try (Stream<Path> paths = Files.walk(Paths.get(folderName))) {
+        Path baseFolder = Paths.get(folderName);
+        
+        fileList = paths
+                .parallel() 
+                .filter(path -> Files.isRegularFile(path) || (Files.isDirectory(path) && Files.isEmptyFolder(path))) // Check for regular files or empty subfolders
+                .filter(path -> !path.equals(baseFolder)) // Exclude the base folder itself
+                .map(path -> path.toAbsolutePath().toString()) 
+                .collect(Collectors.toList());
+    } catch (IOException e) {
+        e.printStackTrace();
     }
+
+    return fileList != null ? fileList : new ArrayList<>();
+}
+
 
     public static void main(String[] args) {
         FileLister fileLister = new FileLister();
