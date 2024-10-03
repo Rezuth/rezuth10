@@ -138,3 +138,33 @@ module myApp {
     angular.module('myApp', [])
         .controller('MyController', MyController);
 }
+
+
+
+
+
+import * as path from 'path';
+
+function getFileName(filePath: string): string {
+    return '/' + path.basename(filePath); // Add leading slash to the file name
+}
+
+// Example usage:
+const filePath = '/etc/config/props/file1.txt';
+console.log(getFileName(filePath)); // Output: /file1.txt
+
+
+
+OR
+
+
+
+
+function getFileName(filePath: string): string {
+    const fileName = filePath.substring(filePath.lastIndexOf('/'));
+    return fileName; // Already starts with '/' because of lastIndexOf('/')
+}
+
+// Example usage:
+const filePath = '/etc/config/props/file1.txt';
+console.log(getFileName(filePath)); // Output: /file1.txt
