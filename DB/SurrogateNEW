@@ -1,0 +1,14 @@
+package org.h2.examples;
+
+import java.sql.Date;
+import java.sql.SQLException;
+
+public class TruncFunction {
+    public static Date truncDate(Date date) throws SQLException {
+        if (date == null) {
+            return null;
+        }
+        // Return the date with the time portion set to zero
+        return Date.valueOf(date.toLocalDate());
+    }
+}
