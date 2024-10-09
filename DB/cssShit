@@ -65,3 +65,43 @@
     border: 1px solid #ccc; /* Optional: for clear separation */
   }
 </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+  th {
+    position: absolute;  /* Absolute positioning */
+    left: 50%;           /* Moves the element's left edge to the center of the container */
+    transform: translateX(-50%); /* Shifts the element left by 50% of its width */
+    white-space: nowrap;  /* Prevents text wrapping */
+    text-align: center;   /* Ensures text is centered within the th */
+  }
+</style>
+
+<table>
+  <tr>
+    <th>Centered Header</th>
+  </tr>
+</table>
+
