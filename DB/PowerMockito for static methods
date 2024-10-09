@@ -25,4 +25,31 @@ public class UtilityClassTest {
         PowerMockito.verifyStatic(UtilityClass.class);
         UtilityClass.getStaticValue();
     }
+
+
+
+
+
+import static org.mockito.Mockito.*;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
+
+public class UtilityClassTest {
+
+    @Test
+    public void testMockStaticMethod() {
+        try (MockedStatic<UtilityClass> mockedStatic = mockStatic(UtilityClass.class)) {
+            // Define behavior for the static method
+            mockedStatic.when(UtilityClass::getStaticValue).thenReturn("Mocked Value");
+
+            // Call the method and check that the mocked result is returned
+            String value = UtilityClass.getStaticValue();
+            assertEquals("Mocked Value", value);
+
+            // Optionally verify that the method was called
+            mockedStatic.verify(UtilityClass::getStaticValue);
+        }
+    }
+}
+
 }
