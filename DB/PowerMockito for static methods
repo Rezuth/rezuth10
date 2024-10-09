@@ -34,22 +34,26 @@ import static org.mockito.Mockito.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class UtilityClassTest {
 
     @Test
-    public void testMockStaticMethod() {
+    public void testMockStaticMethodWithParameter() {
         try (MockedStatic<UtilityClass> mockedStatic = mockStatic(UtilityClass.class)) {
-            // Define behavior for the static method
-            mockedStatic.when(UtilityClass::getStaticValue).thenReturn("Mocked Value");
+            // Define behavior for the static method with a parameter
+            mockedStatic.when(() -> UtilityClass.getStaticValue("TestParam"))
+                        .thenReturn("Mocked Value");
 
             // Call the method and check that the mocked result is returned
-            String value = UtilityClass.getStaticValue();
+            String value = UtilityClass.getStaticValue("TestParam");
             assertEquals("Mocked Value", value);
 
-            // Optionally verify that the method was called
-            mockedStatic.verify(UtilityClass::getStaticValue);
+            // Optionally verify that the method was called with the correct parameter
+            mockedStatic.verify(() -> UtilityClass.getStaticValue("TestParam"));
         }
     }
 }
+
 
 }
