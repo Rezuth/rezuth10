@@ -1,0 +1,67 @@
+<style>
+  table {
+    width: 100%; /* Ensure table takes full width */
+    border-collapse: collapse; /* Optional: for cleaner borders */
+  }
+  th {
+    text-align: left; /* Align all th elements to the left */
+    padding: 8px; /* Optional: adds space around text */
+    border: 1px solid #ccc; /* Optional: adds borders to cells */
+  }
+</style>
+
+<table>
+  <tr>
+    <th>Left Header 1</th>
+    <th>Left Header 2</th>
+  </tr>
+</table>
+
+
+
+
+<style>
+  table {
+    width: 100%; /* Full width */
+  }
+  tr {
+    display: flex; /* Use flex layout for table row */
+  }
+  th {
+    flex: 1; /* Ensures that each th takes equal space */
+    text-align: left; /* Left-align text */
+    padding: 8px; /* Optional: padding */
+  }
+</style>
+
+<table>
+  <tr>
+    <th>Left Header 1</th>
+    <th>Left Header 2</th>
+  </tr>
+</table>
+
+
+
+
+<table>
+  <tr>
+    <th colspan="2" style="text-align: left;">Combined Header</th>
+  </tr>
+  <tr>
+    <th>Left Header 1</th>
+    <th>Left Header 2</th>
+  </tr>
+</table>
+
+
+
+
+<style>
+  th {
+    text-align: left; /* Left align */
+    padding: 8px; /* Consistent padding */
+    margin: 0; /* Reset any margin */
+    border: 1px solid #ccc; /* Optional: for clear separation */
+  }
+</style>
