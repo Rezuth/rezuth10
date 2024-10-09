@@ -1,0 +1,28 @@
+import static org.mockito.Mockito.*;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(UtilityClass.class) // Prepare the class containing static methods
+public class UtilityClassTest {
+
+    @Test
+    public void testMockStaticMethod() {
+        // Mock the static method
+        PowerMockito.mockStatic(UtilityClass.class);
+
+        // Define behavior for the static method
+        when(UtilityClass.getStaticValue()).thenReturn("Mocked Value");
+
+        // Call the method and verify it returns the mocked value
+        String value = UtilityClass.getStaticValue();
+        assertEquals("Mocked Value", value);
+
+        // Optionally verify the static method was called
+        PowerMockito.verifyStatic(UtilityClass.class);
+        UtilityClass.getStaticValue();
+    }
+}
