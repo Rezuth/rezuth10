@@ -1,0 +1,11 @@
+public String getTag(String employee) {
+    try {
+        // Convert the string to the corresponding enum constant
+        Employee emp = Employee.valueOf(employee);
+        // Return the tag of the matched enum constant
+        return emp.getTag();
+    } catch (IllegalArgumentException | NullPointerException e) {
+        // Handle the case where the name doesn't match any enum constant
+        throw new IllegalArgumentException("Invalid employee name: " + employee, e);
+    }
+}
