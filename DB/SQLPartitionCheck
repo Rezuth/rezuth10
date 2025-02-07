@@ -126,3 +126,37 @@ PARTITION BY RANGE (event_date) (
     PARTITION p_20240430 VALUES LESS THAN (TO_DATE('01-MAY-2024', 'DD-MON-YYYY')),
     PARTITION p_20240630 VALUES LESS THAN (TO_DATE('01-JUL-2024', 'DD-MON-YYYY'))
 );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SELECT partition_name
+INTO v_partition_name
+FROM (
+    SELECT partition_name,
+           TO_CHAR(high_value) AS high_value_varchar
+    FROM user_tab_partitions
+    WHERE table_name = UPPER(p_table_name)
+)
+WHERE TO_DATE(
+    REGEXP_SUBSTR(high_value_varchar, '\d{4}-\d{2}-\d{2}', 1, 1), 
+    'YYYY-MM-DD'
+) > p_date
+ORDER BY TO_DATE(
+    REGEXP_SUBSTR(high_value_varchar, '\d{4}-\d{2}-\d{2}', 1, 1), 
+    'YYYY-MM-DD'
+)
+FETCH FIRST 1 ROWS ONLY;
+
