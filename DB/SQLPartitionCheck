@@ -20,19 +20,18 @@ BEGIN
         SELECT partition_name
         INTO v_partition_name
         FROM (
-                SELECT partition_name,
-                EXTRACTVALUE(
-                DBMS_XMLGEN.GETXMLTYPE(
-                   'SELECT high_value FROM user_tab_partitions WHERE table_name = ''' || UPPER(p_table_name) || ''''
-                ), '//text()'
-                ) AS high_value_varchar
-        FROM user_tab_partitions
-        WHERE table_name = UPPER(p_table_name)
-       )
-       WHERE TO_DATE(
-       REGEXP_SUBSTR(high_value_varchar, '''(\d{4}-\d{2}-\d{2})''', 1, 1, NULL, 1), 
-       'YYYY-MM-DD'
-       ) > p_date
+            SELECT partition_name,
+                   (SELECT COLUMN_VALUE 
+                    FROM XMLTABLE('//text()' PASSING DBMS_XMLGEN.GETXMLTYPE(
+                        'SELECT high_value FROM user_tab_partitions WHERE table_name = ''' || UPPER(p_table_name) || ''''
+                    ))) AS high_value_varchar
+            FROM user_tab_partitions
+            WHERE table_name = UPPER(p_table_name)
+        )
+        WHERE TO_DATE(
+            REGEXP_SUBSTR(high_value_varchar, '''(\d{4}-\d{2}-\d{2})''', 1, 1, NULL, 1), 
+            'YYYY-MM-DD'
+        ) > p_date
        ORDER BY high_value_varchar
        FETCH FIRST 1 ROW ONLY;
        EXCEPTION
