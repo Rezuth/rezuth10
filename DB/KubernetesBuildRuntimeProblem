@@ -140,3 +140,131 @@ ENTRYPOINT ["/usr/local/s2i/run"]
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--NEW--
+
+
+
+
+
+
+
+
+
+
+
+
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    meta.helm.sh/release-name: new-relic
+    meta.helm.sh/release-namespace: dk1921-h
+  creationTimestamp: '2025-03-06T14:49:04Z'
+  labels:
+    app: new-relic
+    app.kubernetes.io/instance: new-relic-int3
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: new-relic
+    app.kubernetes.io/version: 2025.01.37-135-SNAPSHOT
+    built-from: java-b2i-template
+    helm.sh/chart: tsp-new-relic-2025.01.37-135-SNAPSHOT-build82int3
+    heritage: Helm
+    nar-id: 171240-1
+    project: tsp
+    version: 2025.01.37-135-SNAPSHOT-build82int3
+  name: new-relic-runtime
+  namespace: dk1921-h
+  resourceVersion: '4094856021'
+  selfLink: >-
+    /apis/build.openshift.io/v1/namespaces/dk1921-h/buildconfigs/new-relic-runtime
+  uid: 262afdc3-fa9a-11ef-90ef-005056bd4fe5
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: DockerImage
+      name: >-
+        docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.37-135-SNAPSHOT-build82int3
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    dockerfile: |-
+      FROM java-open-jdk:17-compliant
+
+      # Add Labels to the image
+      LABEL name={{ include "app.name" . | quote }} \
+            io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
+            summary={{ include "app.name" . | quote }} \
+            description={{ include "app.name" . | quote }} \
+            io.k8s.display-name={{ include "app.name" . | quote }} \
+            io.k8s.description={{ include "app.name" . | quote }} \
+            parent.image="java-open-jdk:17-compliant" \
+            parent.image.1={{ include "app.imageSrcName" . | quote }} \
+            image.tag={{ include "app.version" . | quote }} \
+            io.openshift.build.source-location="" \
+            io.openshift.build.commit.author="" \
+            io.openshift.build.commit.date="" \
+            io.openshift.build.commit.id="" \
+            io.openshift.build.commit.message="" \
+            io.openshift.build.commit.ref=""
+
+      # Create a new folder in the container for deployments
+      RUN mkdir -p /new-deployments && chown -R 1001:0 /new-deployments
+
+      ENV TARGET_DIR="/new-deployments" 
+      COPY /new-deployments/* /new-deployments/  # Adjusted path
+      COPY /usr/local/s2i/* /usr/local/s2i/
+
+      ENTRYPOINT /usr/local/s2i/run
+  strategy:
+    dockerStrategy:
+      env:
+        - name: ARTIFACTORY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: artifactory-key
+              name: artifactory-creds
+      forcePull: true
+      from:
+        kind: DockerImage
+        name: >-
+          docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+    type: Docker
+  successfulBuildsHistoryLimit: 5
+  triggers: []
+  images:
+    - from:
+        kind: DockerImage
+        name: >-
+          docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.37-135-SNAPSHOT-build82int3
+      paths:
+        - sourcePath: /new-deployments/  # Source path in the build context
+          destinationDir: /new-deployments/  # Destination path inside the container
+        - sourcePath: /usr/local/s2i/  # Adjusted if needed
+          destinationDir: /usr/local/s2i/
+status:
+  lastVersion: 22
+
+
+
+
+
