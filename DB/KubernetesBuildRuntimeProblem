@@ -98,3 +98,9 @@ Pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:20
 error: error copying source path /deployments/ to deployments/: API error (404): {"message":"lstat /var/lib/docker/devicemapper/mnt/b24e4eb63db1937b3643f3a6c93c9eaf728bdf1cb619ea8488797d47ff407441/rootfs/deployments/: no such file or directory"}
 
 
+SOLUTIONS:
+
+docker run --rm -it docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant ls -la /deployments
+
+
+
