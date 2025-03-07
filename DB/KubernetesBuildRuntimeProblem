@@ -104,3 +104,39 @@ docker run --rm -it docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-i
 
 
 
+
+
+FROM java-open-jdk:17-compliant
+
+LABEL name="{{ include 'app.name' . | quote }}" \
+      io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
+      summary="{{ include 'app.name' . | quote }}" \
+      description="{{ include 'app.name' . | quote }}" \
+      io.k8s.display-name="{{ include 'app.name' . | quote }}" \
+      io.k8s.description="{{ include 'app.name' . | quote }}" \
+      parent.image="java-open-jdk:17-compliant" \
+      parent.image.1="{{ include 'app.imageSrcName' . | quote }}" \
+      image.tag="{{ include 'app.version' . | quote }}" \
+      io.openshift.build.source-location="" \
+      io.openshift.build.commit.author="" \
+      io.openshift.build.commit.date="" \
+      io.openshift.build.commit.id="" \
+      io.openshift.build.commit.message="" \
+      io.openshift.build.commit.ref=""
+
+# Create /deployments directory and set permissions
+RUN mkdir -p /deployments && chown -R 1001:0 /deployments
+
+# Set the target directory for deployment
+ENV TARGET_DIR="/deployments"
+
+# Copy files from /deployments and /usr/local/s2i directories
+COPY ./deployments/* /deployments/
+COPY ./usr/local/s2i/* /usr/local/s2i/
+
+# Set entrypoint for the application
+ENTRYPOINT ["/usr/local/s2i/run"]
+
+
+
+
