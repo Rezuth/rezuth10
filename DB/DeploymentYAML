@@ -28,3 +28,15 @@ spec:
       volumes:
         - name: new-deployments-volume
           emptyDir: {}
+
+
+
+
+
+FROM java-open-jdk:17-compliant
+
+ENV TARGET_DIR="/new-deployments"
+
+ENTRYPOINT ["/usr/local/s2i/run"]
+CMD ["sh", "-c", "echo 'Deployment successful!' > /new-deployments/info.log && tail -f /dev/null"]
+
