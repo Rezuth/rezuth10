@@ -88,3 +88,97 @@ spec:
   triggers: []
 status:
   lastVersion: 43
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--VERSION 2--
+
+
+
+
+
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  name: new-relic-runtime
+  namespace: dk1921-h
+  labels:
+    app: new-relic
+    app.kubernetes.io/instance: new-relic-int3
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: new-relic
+    app.kubernetes.io/version: 2025.01.38-135-SNAPSHOT
+    built-from: java-b2i-template
+    helm.sh/chart: tsp-new-relic-2025.01.38-135-SNAPSHOT-build83int3
+    heritage: Helm
+    project: tsp
+    version: 2025.01.38-135-SNAPSHOT-build83int3
+spec:
+  failedBuildsHistoryLimit: 5
+  output:
+    to:
+      kind: DockerImage
+      name: docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.38-135-SNAPSHOT-build83int3
+  runPolicy: Serial
+  source:
+    type: Dockerfile
+    dockerfile: |
+      FROM docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+
+      LABEL name="new-relic" \
+            io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
+            summary="new-relic" \
+            description="new-relic" \
+            io.k8s.display-name="new-relic" \
+            io.k8s.description="new-relic" \
+            parent.image="java-open-jdk:17-compliant" \
+            parent.image.1="new-relic-src:2025.01.38-135-SNAPSHOT-build83int3" \
+            image.tag="2025.01.38-135-SNAPSHOT"
+
+      # Create directory and confirm it exists
+      RUN mkdir -p /new-deployments && echo "✅ new-deployments directory created successfully!" && ls -la /new-deployments
+
+      # Set environment variable for reference
+      ENV TARGET_DIR="/new-deployments"
+
+      # Ensure files exist before copying
+      COPY new-deployments/ /new-deployments/
+      COPY usr/local/s2i/ /usr/local/s2i/
+
+      # Set proper ownership if needed (uncomment if permission issues arise)
+      # RUN chown -R 1001:1001 /new-deployments && chmod -R 755 /new-deployments
+
+      # Define entrypoint and keep container running
+      ENTRYPOINT ["/usr/local/s2i/run"]
+      CMD ["sh", "-c", "echo 'Deployment successful!' > /new-deployments/info.log && tail -f /dev/null"]
+  strategy:
+    dockerStrategy:
+      env:
+        - name: ARTIFACTORY_KEY
+          valueFrom:
+            secretKeyRef:
+              name: artifactory-creds
+              key: artifactory-key
+      forcePull: true
+      from:
+        kind: DockerImage
+        name: docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+    type: Docker
+  successfulBuildsHistoryLimit: 5
+  triggers: []
+status:
+  lastVersion: 43
+
