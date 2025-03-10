@@ -1,0 +1,23 @@
+Replaced Dockerfile FROM image docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+
+Pulling image docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant ...
+Step 1/11 : FROM docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+Trying to pull repository docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk ... 
+17-compliant: Pulling from docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk
+Digest: sha256:b52c0df939a0ce40e809ca6d8b94b591c897e946f54a246e61f0635d3bf5392d
+Status: Image is up to date for docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+ ---> 37ffdf7c252f
+Step 2/11 : ENV "ARTIFACTORY_KEY" "<secretKey>"
+ ---> Using cache
+ ---> 79c596ab6be7
+Step 3/11 : LABEL name "new-relic" io.openshift.s2i.scripts-url "image:///usr/local/s2i" summary "new-relic" description "new-relic" io.k8s.display-name "new-relic" io.k8s.description "new-relic" parent.image "java-open-jdk:17-compliant" parent.image.1 "new-relic-src:2025.01.38-135-SNAPSHOT-build83int3" image.tag "2025.01.38-135-SNAPSHOT"
+ ---> Running in faf6ec62ab81
+ ---> 8c13169e77b6
+Removing intermediate container faf6ec62ab81
+Step 4/11 : RUN mkdir -p /new-deployments && echo "new-deployments directory created successfully!" && ls -la /new-deployments
+ ---> Running in 72421b1b591d
+
+new-deployments directory created successfully!
+ls: cannot access '/new-deployments': Operation not permitted
+Removing intermediate container 72421b1b591d
+error: build error: The command '/bin/sh -c mkdir -p /new-deployments && echo "new-deployments directory created successfully!" && ls -la /new-deployments' returned a non-zero code: 2
