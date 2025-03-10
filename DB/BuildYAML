@@ -182,3 +182,11 @@ spec:
 status:
   lastVersion: 43
 
+
+
+--ERROR--
+
+
+Failed to process the resource.
+Reason: buildconfigs.build.openshift.io "new-relic-runtime" is invalid: metadata.resourceVersion: Invalid value: 0x0: must be specified for an update
+
