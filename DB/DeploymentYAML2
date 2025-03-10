@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: new-relic-runtime
+  namespace: dk1921-h
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: new-relic
+  template:
+    metadata:
+      labels:
+        app: new-relic
+    spec:
+      securityContext:
+        fsGroup: 1001  # Ensures group permissions are applied
+      initContainers:
+        - name: init-new-deployments
+          image: busybox  # Use a lightweight image for init tasks
+          command:
+            - sh
+            - "-c"
+            - "mkdir -p /new-deployments && chown -R 1001:1001 /new-deployments && chmod -R 775 /new-deployments"
+          volumeMounts:
+            - mountPath: /new-deployments
+              name: new-deployments-volume
+      containers:
+        - name: new-relic
+          image: docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.38-135-SNAPSHOT-build83int3
+          volumeMounts:
+            - mountPath: /new-deployments
+              name: new-deployments-volume
+          securityContext:
+            runAsUser: 1001  # Ensures the main container runs with proper permissions
+      volumes:
+        - name: new-deployments-volume
+          emptyDir: {}  # Creates a temporary in-memory volume for storage
