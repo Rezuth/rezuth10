@@ -1,0 +1,91 @@
+apiVersion: build.openshift.io/v1
+kind: BuildConfig
+metadata:
+  annotations:
+    meta.helm.sh/release-name: new-relic
+    meta.helm.sh/release-namespace: dk1921-h
+  creationTimestamp: '2025-03-10T19:35:45Z'
+  labels:
+    app: new-relic
+    app.kubernetes.io/instance: new-relic-int3
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: new-relic
+    app.kubernetes.io/version: 2025.01.40-135-SNAPSHOT
+    built-from: java-b2i-template
+    helm.sh/chart: tsp-new-relic-2025.01.40-135-SNAPSHOT-build85int3
+    heritage: Helm
+    nar-id: 171240-1
+    project: tsp
+    version: 2025.01.40-135-SNAPSHOT-build85int3
+  name: new-relic-runtime
+  namespace: dk1921-h
+  resourceVersion: '4100580440'
+  selfLink: >-
+    /apis/build.openshift.io/v1/namespaces/dk1921-h/buildconfigs/new-relic-runtime
+  uid: dc7e1697-fde6-11ef-90ef-005056bd4fe5
+spec:
+  failedBuildsHistoryLimit: 5
+  nodeSelector: null
+  output:
+    to:
+      kind: DockerImage
+      name: >-
+        docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.40-135-SNAPSHOT-build85int3
+  postCommit: {}
+  resources: {}
+  runPolicy: Serial
+  source:
+    dockerfile: |-
+      FROM
+      LABEL name="new-relic" \
+            io.openshift.s2i.scripts-url="image:///usr/local/s2i" \
+            summary="new-relic" \
+            description="new-relic" \
+            io.k8s.display-name="new-relic" \
+            io.k8s.description="new-relic" \
+            parent.image="java-open-jdk:17-compliant" \
+            parent.image.1="new-relic-src:2025.01.40-135-SNAPSHOT-build85int3" \
+            image.tag="2025.01.40-135-SNAPSHOT" \
+            io.openshift.build.source-location="" \
+            io.openshift.build.commit.author="" \
+            io.openshift.build.commit.date="" \
+            io.openshift.build.commit.id="" \
+            io.openshift.build.commit.message="" \
+            io.openshift.build.commit.ref=""
+      ENTRYPOINT ["/usr/local/s2i/run"]
+    images:
+      - as: null
+        from:
+          kind: DockerImage
+          name: >-
+            docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic-src:2025.01.40-135-SNAPSHOT-build85int3
+        paths:
+          - destinationDir: usr/local/s2i/
+            sourcePath: /usr/local/s2i
+    type: Dockerfile
+  strategy:
+    dockerStrategy:
+      env:
+        - name: ARTIFACTORY_KEY
+          valueFrom:
+            secretKeyRef:
+              key: artifactory-key
+              name: artifactory-creds
+      forcePull: true
+      from:
+        kind: DockerImage
+        name: >-
+          docker-registry.svc.uk.paas.intranet.db.com/fabric-managed-images/java-open-jdk:17-compliant
+    type: Docker
+  successfulBuildsHistoryLimit: 5
+  triggers: []
+status:
+  lastVersion: 6
+
+
+
+
+
+
+Pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic-src:2025.01.40-135-SNAPSHOT-build85int3" ...
+error: error copying source path /usr/local/s2i to usr/local/s2i/: API error (404): {"message":"lstat /var/lib/docker/devicemapper/mnt/eebaf5e6435072bf352fbef5a8fef505c990b6361c07c994f1edd80f0c56017e/rootfs/usr/local/s2i: no such file or directory"}
