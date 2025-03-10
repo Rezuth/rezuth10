@@ -21,3 +21,8 @@ new-deployments directory created successfully!
 ls: cannot access '/new-deployments': Operation not permitted
 Removing intermediate container 72421b1b591d
 error: build error: The command '/bin/sh -c mkdir -p /new-deployments && echo "new-deployments directory created successfully!" && ls -la /new-deployments' returned a non-zero code: 2
+
+
+
+RUN mkdir -p /tmp/new-deployments && echo "new-deployments directory created successfully!" && ls -la /tmp/new-deployments
+ENV TARGET_DIR="/tmp/new-deployments"
