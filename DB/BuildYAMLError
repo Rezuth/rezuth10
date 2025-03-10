@@ -26,3 +26,13 @@ error: build error: The command '/bin/sh -c mkdir -p /new-deployments && echo "n
 
 RUN mkdir -p /tmp/new-deployments && echo "new-deployments directory created successfully!" && ls -la /tmp/new-deployments
 ENV TARGET_DIR="/tmp/new-deployments"
+
+
+
+
+
+
+RUN mkdir -p /new-deployments && \
+    chmod -R g+w /new-deployments && \
+    chown -R 1001:0 /new-deployments
+
