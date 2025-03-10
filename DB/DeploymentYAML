@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}
+    spec:
+      initContainers:
+        - name: init-create-dir
+          image: busybox
+          command: ["/bin/sh", "-c", "mkdir -p /new-deployments && chmod 777 /new-deployments"]
+          volumeMounts:
+            - mountPath: /new-deployments
+              name: new-deployments-volume
+      containers:
+        - name: {{ .Release.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          volumeMounts:
+            - mountPath: /new-deployments
+              name: new-deployments-volume
+      volumes:
+        - name: new-deployments-volume
+          emptyDir: {}
