@@ -40,3 +40,36 @@ ENV TARGET_DIR="/new-deployments"
 ENTRYPOINT ["/usr/local/s2i/run"]
 CMD ["sh", "-c", "echo 'Deployment successful!' > /new-deployments/info.log && tail -f /dev/null"]
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+FROM java-open-jdk:17-compliant
+
+# Create directory before copying and print confirmation message
+RUN mkdir -p /new-deployments && \
+    echo "✅ /new-deployments directory created successfully!"
+
+# Set environment variable (optional)
+ENV TARGET_DIR="/new-deployments"
+
+# Copy deployment files (ensure they exist in your build context)
+COPY new-deployments/* /new-deployments/
+
+# Log a message when the container starts
+CMD ["sh", "-c", "echo 'Deployment successful!' > /new-deployments/info.log && echo '✅ Deployment completed successfully!' && tail -f /dev/null"]
+
+
