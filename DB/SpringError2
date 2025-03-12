@@ -145,3 +145,8 @@ jpa:
     <artifactId>ojdbc8</artifactId>
     <scope>runtime</scope>
 </dependency>
+
+
+
+
+spring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access=false
