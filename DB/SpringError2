@@ -92,3 +92,9 @@ logging:
     root: debug
     com.zaxxer.hikari: debug
     oracle.jdbc: debug
+
+
+
+
+NRI_ORACLE_URL=jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCPS)(HOST=frtsp4d.de.db.com)(PORT=1801)))(CONNECT_DATA=(SERVICE_NAME=frtsp4d_app.de.db.com)))
+
