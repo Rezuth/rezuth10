@@ -73,3 +73,22 @@ management:
     metrics:
       export:
         enabled: true
+
+
+
+
+
+
+
+
+mvn dependency:tree | grep ojdbc
+
+oracle.jdbc.OracleDriver
+
+
+
+logging:
+  level:
+    root: debug
+    com.zaxxer.hikari: debug
+    oracle.jdbc: debug
