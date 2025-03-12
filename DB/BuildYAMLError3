@@ -1,0 +1,22 @@
+2:42:10 AM	Warning	Failed 	Error: ImagePullBackOff
+38 times in the last 10 minutes
+2:37:13 AM	Normal	Back-off 	Back-off pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic-actuator:2025.01.48-135-SNAPSHOT-build94int3"
+19 times in the last 10 minutes
+2:32:32 AM	Normal	Back-off 	Back-off pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.48-135-SNAPSHOT-build94int3"
+3 times in the last 10 minutes
+2:32:32 AM	Warning	Failed 	Error: ImagePullBackOff
+3 times in the last 10 minutes
+2:32:19 AM	Warning	Failed 	Failed to pull image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.48-135-SNAPSHOT-build94int3": rpc error: code = Unknown desc = Error: image dk1921-h/new-relic:2025.01.48-135-SNAPSHOT-build94int3 not found
+2 times in the last 10 minutes
+2:32:19 AM	Warning	Failed 	Error: ErrImagePull
+2 times in the last 10 minutes
+2:32:19 AM	Normal	Pulling 	pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic:2025.01.48-135-SNAPSHOT-build94int3"
+2 times in the last 10 minutes
+2:32:19 AM	Warning	Failed 	Error: ErrImagePull
+2 times in the last 10 minutes
+2:32:19 AM	Warning	Failed 	Failed to pull image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic-actuator:2025.01.48-135-SNAPSHOT-build94int3": rpc error: code = Unknown desc = name unknown
+2 times in the last 10 minutes
+2:32:18 AM	Normal	Pulling 	pulling image "docker-registry.svc.uk.paas.intranet.db.com/dk1921-h/new-relic-actuator:2025.01.48-135-SNAPSHOT-build94int3"
+2 times in the last 10 minutes
+2:31:59 AM	Normal	Sandbox Changed 	Pod sandbox changed, it will be killed and re-created.
+2:31:56 AM	Normal	Scheduled 	Successfully assigned dk1921-h/new-relic-57f6994d96-4rnbg to frainfabd23.de.db.com
