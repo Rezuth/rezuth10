@@ -150,3 +150,37 @@ jpa:
 
 
 spring.jpa.properties.hibernate.boot.allow_jdbc_metadata_access=false
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+spring:
+  datasource:
+    url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCPS)(HOST=frtsp4d.de.db.com)(PORT=1801)))(CONNECT_DATA=(SERVICE_NAME=frtsp4d_app.de.db.com)))
+    username: yourUsername
+    password: yourPassword
+    driver-class-name: oracle.jdbc.OracleDriver
+    hikari:
+      maximum-pool-size: 10
+  jpa:
+    hibernate:
+      dialect: org.hibernate.dialect.Oracle12cDialect
+    properties:
+      jakarta.persistence.jdbc.url: jdbc:oracle:thin:@(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=TCPS)(HOST=frtsp4d.de.db.com)(PORT=1801)))(CONNECT_DATA=(SERVICE_NAME=frtsp4d_app.de.db.com)))
+      jakarta.persistence.jdbc.user: yourUsername
+      jakarta.persistence.jdbc.password: yourPassword
+    hbm2ddl:
+      auto: update
+    show-sql: true
+    format-sql: true
+
