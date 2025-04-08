@@ -46,12 +46,11 @@ at java.base/java.lang.Thread.run(Thread.java:840)
 
 
 
+@RestController
+public class RootController {
+    @GetMapping("/")
+    public ResponseEntity<String> index() {
+        return ResponseEntity.ok("Backend is running.");
+    }
+}
 
-<resource>
-                                    <directory>${basedir}/../code/src/main</directory>
-                                    <includes>
-                                        <include>resources/application.yml</include>
-                                        <include>resources/static/favicon.ico</include>
-                                    </includes>
-                                    <filtering>true</filtering>
-                                </resource>
