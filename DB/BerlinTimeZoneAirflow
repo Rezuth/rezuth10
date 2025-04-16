@@ -1,0 +1,24 @@
+
+
+from datetime import datetime
+import pytz
+
+def get_request_date_from_context(context) -> str:
+    dt = context['data_interval_end']
+
+    if is_overwritten_execution(context):
+        dt = datetime.strptime(
+            context['params']['NEXT_COB_DAY'], Y_M_D
+        )
+
+    actual_tz = pytz.timezone(TZ_BERLIN)
+
+    if dt.tzinfo is None:
+        dt = actual_tz.localize(dt)
+    else:
+        dt = dt.astimezone(actual_tz)
+
+    year, month, day, *_ = dt.timetuple()
+
+    # return a string here — assuming that’s your goal
+    return f"{year:04d}-{month:02d}-{day:02d}"
