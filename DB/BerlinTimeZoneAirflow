@@ -113,9 +113,10 @@ def get_request_date_from_context(context) -> str:
         next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
         berlin_datetime = next_cob_day.astimezone(berlin_tz)
 
-    # Format the date in Berlin time
-    _request_date = berlin_datetime.strftime("%Y-%m-%d")
-    print(f"### Running for Berlin date: {_request_date}")
+    # Format the date and time in Berlin time
+    _request_date = berlin_datetime.strftime("%Y-%m-%d %H:%M:%S")  # Includes hour, minute, second
+    print(f"### Running for Berlin date and time: {_request_date}")
     return _request_date
+
 
 
