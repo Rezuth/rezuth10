@@ -71,8 +71,17 @@ def get_request_date_from_context(context) -> str:
 
 
 
-berlin_now = datetime.now(pytz.timezone("Europe/Berlin"))
+berlin_tz = pytz.timezone("Europe/Berlin")
+utc_tz = pytz.utc
+
+# Current time in Berlin
+berlin_now = datetime.now(berlin_tz)
+
+# Convert to UTC
+utc_now = berlin_now.astimezone(utc_tz)
+
 print("Current time in Berlin:", berlin_now.strftime("%Y-%m-%d %H:%M:%S"))
+print("Corresponding time in UTC:", utc_now.strftime("%Y-%m-%d %H:%M:%S"))
 
 
 
