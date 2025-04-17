@@ -22,3 +22,12 @@ def get_request_date_from_context(context) -> str:
 
     # return a string here — assuming that’s your goal
     return f"{year:04d}-{month:02d}-{day:02d}"
+
+
+
+
+date_1 = dt.timetuple()
+
+print(f"{date_1.tm_year:04d}-{date_1.tm_mon:02d}-{date_1.tm_mday:02d} "
+      f"{date_1.tm_hour:02d}:{date_1.tm_min:02d}:{date_1.tm_sec:02d}")
+
