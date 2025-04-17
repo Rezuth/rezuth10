@@ -85,3 +85,37 @@ print("Corresponding time in UTC:", utc_now.strftime("%Y-%m-%d %H:%M:%S"))
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+import pytz
+from datetime import datetime
+
+def get_request_date_from_context(context) -> str:
+    # Define Berlin timezone
+    berlin_tz = pytz.timezone('Europe/Berlin')
+    
+    # Extract UTC date from 'data_interval_end'
+    utc_datetime = context['data_interval_end']
+    berlin_datetime = utc_datetime.astimezone(berlin_tz)
+
+    # Handle overwritten execution logic
+    if is_overwritten_execution(context):
+        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
+        berlin_datetime = next_cob_day.astimezone(berlin_tz)
+
+    # Format the date in Berlin time
+    _request_date = berlin_datetime.strftime("%Y-%m-%d")
+    print(f"### Running for Berlin date: {_request_date}")
+    return _request_date
+
+
