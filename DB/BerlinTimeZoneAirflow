@@ -31,3 +31,69 @@ date_1 = dt.timetuple()
 print(f"{date_1.tm_year:04d}-{date_1.tm_mon:02d}-{date_1.tm_mday:02d} "
       f"{date_1.tm_hour:02d}:{date_1.tm_min:02d}:{date_1.tm_sec:02d}")
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+from datetime import datetime
+import pytz
+
+Y_M_D = "%Y-%m-%d"
+TZ_BERLIN = 'Europe/Berlin'
+
+def get_request_date_from_context(context) -> str:
+    dt = context['data_interval_end']
+
+    if is_overwritten_execution(context):
+        dt = datetime.strptime(
+            context['params']['NEXT_COB_DAY'], Y_M_D
+        )
+
+    date_1 = dt  # before timezone conversion
+
+    actual_tz = pytz.timezone(TZ_BERLIN)
+
+    if dt.tzinfo is None:
+        dt = actual_tz.localize(dt)
+    else:
+        dt = dt.astimezone(actual_tz)
+
+    date_2 = dt  # after timezone conversion
+
+    print("Full datetime in UTC (or naive) timezone:", date_1.strftime("%Y-%m-%d %H:%M:%S"))
+    print("Full datetime in Berlin timezone:", date_2.strftime("%Y-%m-%d %H:%M:%S"))
+
+    # Return value (optional)
+    return dt.strftime(Y_M_D)
+
+
