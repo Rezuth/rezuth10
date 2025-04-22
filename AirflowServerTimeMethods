@@ -1,0 +1,57 @@
+METHOD 1:
+
+from datetime import datetime
+from dateutil import tz
+
+def get_request_date_from_context(context) -> str:
+    utc_datetime = context['data_interval_end']
+    local_timezone = tz.tzlocal()  # Dynamically retrieves the server's local timezone
+    server_datetime = utc_datetime.astimezone(local_timezone)
+
+    if is_overwritten_execution(context):
+        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
+        server_datetime = next_cob_day.astimezone(local_timezone)
+
+    request_date = server_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    print(f"### Running for server date and time: {request_date}")
+    return request_date
+
+
+METHOD 2:
+
+
+import pendulum
+
+def get_request_date_from_context(context) -> str:
+    utc_datetime = context['data_interval_end']
+    server_datetime = pendulum.instance(utc_datetime).in_tz(pendulum.local_timezone())
+
+    if is_overwritten_execution(context):
+        next_cob_day = pendulum.parse(context['params']['NEXT_COB_DAY'], strict=False)
+        server_datetime = next_cob_day.in_tz(pendulum.local_timezone())
+
+    request_date = server_datetime.format("YYYY-MM-DD HH:mm:ss")
+    print(f"### Running for server date and time: {request_date}")
+    return request_date
+
+
+
+METHOD 3:
+
+
+
+import time
+from datetime import datetime
+
+def get_request_date_from_context(context) -> str:
+    utc_datetime = context['data_interval_end']
+    local_time_offset = time.localtime().tm_gmtoff / 3600  # Get the server's timezone offset
+    server_datetime = utc_datetime + timedelta(hours=local_time_offset)
+
+    if is_overwritten_execution(context):
+        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
+        server_datetime = next_cob_day + timedelta(hours=local_time_offset)
+
+    request_date = server_datetime.strftime("%Y-%m-%d %H:%M:%S")
+    print(f"### Running for server date and time: {request_date}")
+    return request_date
