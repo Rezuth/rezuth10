@@ -120,3 +120,45 @@ def get_request_date_from_context(context) -> str:
 
 
 
+
+
+
+
+SERVER TIME:
+
+
+
+
+
+
+
+
+
+
+
+
+
+import pytz
+import tzlocal  # Dynamically retrieves the server timezone
+from datetime import datetime
+
+def get_request_date_from_context(context) -> str:
+    # Retrieve server timezone dynamically
+    server_tz = tzlocal.get_localzone()
+    
+    # Extract UTC date from 'data_interval_end'
+    utc_datetime = context['data_interval_end']
+    server_datetime = utc_datetime.astimezone(server_tz)
+
+    # Handle overwritten execution logic
+    if is_overwritten_execution(context):
+        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
+        server_datetime = next_cob_day.astimezone(server_tz)
+
+    # Format the date and time in server time
+    _request_date = server_datetime.strftime("%Y-%m-%d %H:%M:%S")  # Includes hour, minute, second
+    print(f"### Running for server date and time: {_request_date}")
+    return _request_date
+
+
+
