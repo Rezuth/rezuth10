@@ -180,21 +180,27 @@ from datetime import datetime
 import pytz
 
 def get_request_date_from_context(context) -> str:
+    from datetime import datetime, time, timedelta
+import pytz
+
+def get_request_date_from_context(context) -> str:
     # Extract UTC date from 'data_interval_end'
     utc_datetime = context['data_interval_end']
-    # Convert UTC to local server time (no tzlocal or zoneinfo)
+    # Convert to local server time
     local_datetime = utc_datetime.astimezone()
 
     # Handle overwritten execution logic
     if is_overwritten_execution(context):
-        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d")
-        # Localize to server timezone
-        next_cob_day = next_cob_day.replace(tzinfo=local_datetime.tzinfo)
-        local_datetime = next_cob_day
+        # Get just the overridden date (no time)
+        next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d").date()
+        # Replace the date part but keep the time from the original local_datetime
+        local_datetime = local_datetime.replace(year=next_cob_day.year,
+                                                month=next_cob_day.month,
+                                                day=next_cob_day.day)
 
-    # Format the date and time in local time
     _request_date = local_datetime.strftime("%Y-%m-%d %H:%M:%S")
     print(f"### Running for server's local date and time: {_request_date}")
     return _request_date
+
 
 
