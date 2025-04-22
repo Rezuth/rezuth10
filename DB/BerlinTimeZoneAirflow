@@ -177,25 +177,20 @@ def get_request_date_from_context(context) -> str:
 
 
 from datetime import datetime
-import pytz
 
 def get_request_date_from_context(context) -> str:
-    utc_datetime = context['data_interval_end']
-    local_datetime = utc_datetime.astimezone()  # converts to server time
+    # Just use server's current local datetime
+    local_datetime = datetime.now()
 
     if is_overwritten_execution(context):
-        # Get the desired date
         next_cob_day = datetime.strptime(context['params']['NEXT_COB_DAY'], "%Y-%m-%d").date()
-        
-        # Extract local time from the already-converted local_datetime
         local_time = local_datetime.time()
-        
-        # Combine new date with original local time
-        local_datetime = datetime.combine(next_cob_day, local_time).astimezone()
+        local_datetime = datetime.combine(next_cob_day, local_time)
 
     _request_date = local_datetime.strftime("%Y-%m-%d %H:%M:%S")
-    print(f"### Running for server's local date and time REALLY FINAL???: {_request_date}")
+    print(f"### Using server's actual local date and time: {_request_date}")
     return _request_date
+
 
 
 
