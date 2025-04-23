@@ -1,0 +1,18 @@
+from airflow.configuration import conf
+
+# Replace 'your_section' with the actual section name where 'test' is defined
+section = 'your_section'
+key = 'test'
+
+try:
+    value = conf.get(section, key)
+    print(f"Value for '{key}' in section '{section}': {value}")
+except Exception as e:
+    print(f"Could not retrieve value for '{key}': {e}")
+
+
+
+
+for section in conf.sections():
+    if conf.has_option(section, "test"):
+        print(f"Found in [{section}]: {conf.get(section, 'test')}")
