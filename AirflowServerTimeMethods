@@ -22,9 +22,11 @@ METHOD 2:
 
 import pendulum
 
+import pendulum
+
 def get_request_date_from_context(context) -> str:
-    utc_datetime = context['data_interval_end']
-    server_datetime = pendulum.instance(utc_datetime).in_tz(pendulum.local_timezone())
+    utc_datetime = pendulum.instance(context['data_interval_end'], tz='UTC')  # Ensure timezone-aware
+    server_datetime = utc_datetime.in_tz(pendulum.local_timezone())
 
     if is_overwritten_execution(context):
         next_cob_day = pendulum.parse(context['params']['NEXT_COB_DAY'], strict=False)
