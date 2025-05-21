@@ -1,3 +1,10 @@
 | rex field=message "The file (?<filepath>\\\\[^ ]+(?:\\[^ ]+)*\\[^\\]+)"
 | eval encoded_path = replace(filepath, " ", "%20")
 | eval message = replace(message, filepath, encoded_path)
+
+
+
+| rex field=message "file (?<filepath>\\\\[^\s]+(?:\\[^\s]+)*\.[^\s]+)"
+| eval encoded_path = replace(filepath, " ", "%20")
+| eval message = replace(message, filepath, encoded_path)
+
