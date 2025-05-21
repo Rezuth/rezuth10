@@ -20,3 +20,9 @@
 | eval test="test" 
 | eval pos=strpos(test, "e")
 
+
+| rex field=message "Save on path (?<filepath>\\\\.*)"
+| eval encoded_path = replace(filepath, " ", "%20")
+| eval message = replace(message, filepath, encoded_path)
+
+
