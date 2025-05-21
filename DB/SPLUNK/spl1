@@ -8,3 +8,10 @@
 | eval encoded_path = replace(filepath, " ", "%20")
 | eval message = replace(message, filepath, encoded_path)
 
+
+| eval start = strpos(message, "file ") + 5
+| eval part1 = substr(message, 1, start)
+| eval part2 = substr(message, start + 1)
+| eval part2 = replace(part2, " ", "%20")
+| eval message = part1 . part2
+
