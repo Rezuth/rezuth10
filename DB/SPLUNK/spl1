@@ -15,3 +15,8 @@
 | eval part2 = replace(part2, " ", "%20")
 | eval message = part1 . part2
 
+
+| makeresults 
+| eval test="test" 
+| eval pos=strpos(test, "e")
+
