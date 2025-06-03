@@ -7,3 +7,14 @@ index=… "DAG FAILED!"
     Task_id:\s*(?<Task_id>\S+)
 "
 | table Environment, Message, Dag_id, Run_id, Task_id
+
+
+
+
+
+
+
+index=your_index_name "DAG FAILED!" 
+| rex "Environment: (?<env>\S+)"
+| table _raw, env
+
