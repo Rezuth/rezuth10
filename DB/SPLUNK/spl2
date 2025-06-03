@@ -18,3 +18,10 @@ index=your_index_name "DAG FAILED!"
 | rex "Environment: (?<env>\S+)"
 | table _raw, env
 
+
+
+
+
+index=your_index "DAG FAILED!"
+| rex "Environment:\s*(?<Environment>\S+)\s+Message:\s*(?<Message>.*?)\s+Dag_id:\s*(?<Dag_id>\S+)\s+Run_id:\s*(?<Run_id>\S+)\s+Task_id:\s*(?<Task_id>\S+)"
+| table _time, Environment, Message, Dag_id, Run_id, Task_id
